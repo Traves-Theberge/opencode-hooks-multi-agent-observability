@@ -1,27 +1,35 @@
 # Changelog
 
-## [1.0.0] - 2026-03-01
+All notable changes to this project are documented here.  
+Format based on [Keep a Changelog](https://keepachangelog.com/).
+
+## [Unreleased]
 
 ### Changed
-- **Branding Migration:** Fully migrated the application's underlying focus and nomenclature from "Claude Code" to "OpenCode".
-- **Directory Migrations:**
-  - Renamed `.claude/` directory to `.opencode/`.
-  - Renamed `CLAUDE.md` to `OPENCODE.md`.
-  - Renamed `apps/demo-cc-agent/` to `apps/demo-opencode-agent/`.
-  - Renamed `apps/server/CLAUDE.md` to `apps/server/OPENCODE.md`.
-  - Renamed `images/claude-code-multi-agent-orchestration.png` to `images/opencode-multi-agent-orchestration.png`.
-- **Model References Migration:**
-  - Renamed `ai_docs/sonnet45/` to `ai_docs/opencode-pro/`.
-  - Renamed `ai_docs/haiku45/` to `ai_docs/opencode-flash/`.
-  - Renamed agent implementations `.opencode/agents/fetch-docs-sonnet45.md` and `.opencode/agents/fetch-docs-haiku45.md` to use the `opencode-pro` and `opencode-flash` naming conventions.
-  - Replaced internal mentions of specific models (`sonnet45`, `haiku45`, `claude-haiku`) with OpenCode abstractions (`opencode-pro`, `opencode-flash`) across UI components, READMEs, scripts, and documentation files.
-- **Documentation Overhaul:**
-  - Standardized terminology across all markdown files in `app_docs/` and `ai_docs/`.
-  - Reformatted AI documentation answers using clean GitHub-flavoured markdown callouts and structured tables.
-- **Internal APIs & UIs:**
-  - Updated Vue.js components (`AgentSwimLane`, `ChatTranscript`, `EventRow`) to target OpenCode variables and text bindings.
-  - Adjusted internal script tooling (like `justfile`, `scripts/*`) to properly query the new `.opencode/` pathways.
-- **Hook Scripts Migration to TypeScript:**
-  - Migrated all Python-based OpenCode hooks (`.opencode/hooks/*.py`) and utilities to TypeScript (`.ts`) for better integration with Node.js ecosystems.
-  - Updated configuration (`.opencode/settings.json`) to execute hooks via `bun run` instead of `uv run`.
-  - Replaced Python dependencies (`os`, `json`, `pathlib`) with Node.js standard modules (`fs`, `path`, `process`) across the hook lifecycle methods.
+- Consolidated documentation into `docs/` directory
+- Rewrote `README.md` for clarity and brevity
+- Fixed `justfile` hooks recipes to use Bun/TypeScript
+
+### Removed
+- Removed `ai_docs/` directory (stale external links)
+- Removed `app_docs/` directory (moved to `docs/`)
+- Removed `specs/` directory (one-off planning artifacts)
+- Removed `.mcp.json.firecrawl_7k.sample`
+
+## [1.0.0] - 2026-03-01
+
+### Added
+- TypeScript hook system with 12 event-specific scripts
+- Bun-powered SQLite server with WebSocket streaming
+- Vue 3 real-time dashboard with filtering and live charts
+- Human-in-the-Loop (HITL) WebSocket integration
+- Multi-agent team orchestration support
+- TTS announcements (ElevenLabs, OpenAI, system fallback)
+- Model name extraction with 60-second file cache
+- `justfile` task runner with dev recipes
+
+### Changed
+- Migrated all hook scripts from Python to TypeScript
+- Replaced `uv run` with `bun run` across all configs
+- Replaced `ANTHROPIC_API_KEY` with `OPENROUTER_API_KEY`
+- Renamed project from Claude Code to OpenCode branding

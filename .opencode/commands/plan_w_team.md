@@ -339,10 +339,10 @@ Use these files to complete the task:
 Execute these commands to validate the task is complete:
 
 <list specific commands to validate the work. Be precise about what to run>
-- Example: `uv run python -m py_compile apps/*.py` - Test to ensure the code compiles
+- Example: `bunx tsc --noEmit --skipLibCheck` - Test to ensure the code compiles
 
 ## Notes
-<optional additional context, considerations, or dependencies. If new libraries are needed, specify using `uv add`>
+<optional additional context, considerations, or dependencies. If new libraries are needed, specify using `bun add`>
 ```
 
 ## Report
