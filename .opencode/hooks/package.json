@@ -1,0 +1,19 @@
+{
+  "name": "hooks",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/play-sound": "^1.1.2",
+    "dotenv": "^17.3.1",
+    "openai": "^6.25.0",
+    "play-sound": "^1.1.6",
+    "say": "^0.16.0"
+  }
+}
