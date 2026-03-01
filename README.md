@@ -1,17 +1,17 @@
 # Multi-Agent Observability System
 
-Real-time monitoring and visualization for Claude Code agents through comprehensive hook event tracking. Watch the [latest deep dive on multi-agent orchestration with Opus 4.6 here](https://youtu.be/RpUTF_U4kiw). With Claude Opus 4.6 and multi-agent orchestration, you can now spin up teams of specialized agents that work in parallel, and this observability system lets you trace every tool call, task handoff, and agent lifecycle event across the entire swarm.
+Real-time monitoring and visualization for OpenCode agents through comprehensive hook event tracking. Watch the [latest deep dive on multi-agent orchestration with Opus 4.6 here](https://youtu.be/RpUTF_U4kiw). With OpenCode Opus 4.6 and multi-agent orchestration, you can now spin up teams of specialized agents that work in parallel, and this observability system lets you trace every tool call, task handoff, and agent lifecycle event across the entire swarm.
 
 ## 🎯 Overview
 
-This system provides complete observability into Claude Code agent behavior by capturing, storing, and visualizing Claude Code [Hook events](https://docs.anthropic.com/en/docs/claude-code/hooks) in real-time. It enables monitoring of multiple concurrent agents with session tracking, event filtering, and live updates. 
+This system provides complete observability into OpenCode agent behavior by capturing, storing, and visualizing OpenCode [Hook events](https://docs.anthropic.com/en/docs/opencode/hooks) in real-time. It enables monitoring of multiple concurrent agents with session tracking, event filtering, and live updates. 
 
 <img src="images/app.png" alt="Multi-Agent Observability Dashboard" style="max-width: 800px; width: 100%;">
 
 ## 🏗️ Architecture
 
 ```
-Claude Agents → Hook Scripts → HTTP POST → Bun Server → SQLite → WebSocket → Vue Client
+OpenCode Agents → Hook Scripts → HTTP POST → Bun Server → SQLite → WebSocket → Vue Client
 ```
 
 ![Agent Data Flow Animation](images/AgentDataFlowV2.gif)
@@ -20,7 +20,7 @@ Claude Agents → Hook Scripts → HTTP POST → Bun Server → SQLite → WebSo
 
 Before getting started, ensure you have the following installed:
 
-- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** - Anthropic's official CLI for Claude
+- **[OpenCode](https://docs.anthropic.com/en/docs/opencode)** - Anthropic's official CLI for OpenCode
 - **[Astral uv](https://docs.astral.sh/uv/)** - Fast Python package manager (required for hook scripts)
 - **[Bun](https://bun.sh/)**, **npm**, or **yarn** - For running the server and client
 - **[just](https://github.com/casey/just)** (optional) - Command runner for project recipes
@@ -29,20 +29,20 @@ Before getting started, ensure you have the following installed:
 - **ElevenLabs API Key** (optional) - For audio features
 - **Firecrawl API Key** (optional) - For web scraping features
 
-### Configure .claude Directory
+### Configure .opencode Directory
 
-To setup observability in your repo,we need to copy the .claude directory to your project root.
+To setup observability in your repo,we need to copy the .opencode directory to your project root.
 
 To integrate the observability hooks into your projects:
 
-1. **Copy the entire `.claude` directory to your project root:**
+1. **Copy the entire `.opencode` directory to your project root:**
    ```bash
-   cp -R .claude /path/to/your/project/
+   cp -R .opencode /path/to/your/project/
    ```
 
 2. **Update the `settings.json` configuration:**
    
-   Open `.claude/settings.json` in your project and modify the `source-app` parameter to identify your project:
+   Open `.opencode/settings.json` in your project and modify the `source-app` parameter to identify your project:
    
    ```json
    {
@@ -52,11 +52,11 @@ To integrate the observability hooks into your projects:
          "hooks": [
            {
              "type": "command",
-             "command": "uv run .claude/hooks/pre_tool_use.py"
+             "command": "uv run .opencode/hooks/pre_tool_use.py"
            },
            {
              "type": "command",
-             "command": "uv run .claude/hooks/send_event.py --source-app YOUR_PROJECT_NAME --event-type PreToolUse --summarize"
+             "command": "uv run .opencode/hooks/send_event.py --source-app YOUR_PROJECT_NAME --event-type PreToolUse --summarize"
            }
          ]
        }],
@@ -65,11 +65,11 @@ To integrate the observability hooks into your projects:
          "hooks": [
            {
              "type": "command",
-             "command": "uv run .claude/hooks/post_tool_use.py"
+             "command": "uv run .opencode/hooks/post_tool_use.py"
            },
            {
              "type": "command",
-             "command": "uv run .claude/hooks/send_event.py --source-app YOUR_PROJECT_NAME --event-type PostToolUse --summarize"
+             "command": "uv run .opencode/hooks/send_event.py --source-app YOUR_PROJECT_NAME --event-type PostToolUse --summarize"
            }
          ]
        }],
@@ -77,11 +77,11 @@ To integrate the observability hooks into your projects:
          "hooks": [
            {
              "type": "command",
-             "command": "uv run .claude/hooks/user_prompt_submit.py --log-only"
+             "command": "uv run .opencode/hooks/user_prompt_submit.py --log-only"
            },
            {
              "type": "command",
-             "command": "uv run .claude/hooks/send_event.py --source-app YOUR_PROJECT_NAME --event-type UserPromptSubmit --summarize"
+             "command": "uv run .opencode/hooks/send_event.py --source-app YOUR_PROJECT_NAME --event-type UserPromptSubmit --summarize"
            }
          ]
        }]
@@ -99,11 +99,11 @@ To integrate the observability hooks into your projects:
    ./scripts/start-system.sh
    ```
 
-Now your project will send events to the observability system whenever Claude Code performs actions.
+Now your project will send events to the observability system whenever OpenCode performs actions.
 
 ## 🚀 Quick Start
 
-You can quickly view how this works by running this repository's `.claude` setup.
+You can quickly view how this works by running this repository's `.opencode` setup.
 
 ```bash
 # 1. Start both server and client
@@ -111,13 +111,13 @@ just start          # or: ./scripts/start-system.sh
 
 # 2. Open http://localhost:5173 in your browser
 
-# 3. Open Claude Code and run the following command:
+# 3. Open OpenCode and run the following command:
 Run git ls-files to understand the codebase.
 
 # 4. Watch events stream in the client
 
-# 5. Copy the .claude folder to other projects you want to emit events from.
-cp -R .claude <directory of your codebase you want to emit events from>
+# 5. Copy the .opencode folder to other projects you want to emit events from.
+cp -R .opencode <directory of your codebase you want to emit events from>
 ```
 
 ### Using `just` (Recommended)
@@ -142,7 +142,7 @@ just open         # Open dashboard in browser
 ## 📁 Project Structure
 
 ```
-claude-code-hooks-multi-agent-observability/
+opencode-hooks-multi-agent-observability/
 │
 ├── apps/                    # Application components
 │   ├── server/             # Bun TypeScript server
@@ -174,7 +174,7 @@ claude-code-hooks-multi-agent-observability/
 │       ├── .env.sample     # Environment configuration template
 │       └── package.json
 │
-├── .claude/                # Claude Code integration
+├── .opencode/                # OpenCode integration
 │   ├── hooks/             # Hook scripts (Python with uv)
 │   │   ├── send_event.py          # Universal event sender (all 12 event types)
 │   │   ├── pre_tool_use.py        # Tool validation, blocking & summarization
@@ -217,11 +217,11 @@ claude-code-hooks-multi-agent-observability/
 
 ## 🔧 Component Details
 
-### 1. Hook System (`.claude/hooks/`)
+### 1. Hook System (`.opencode/hooks/`)
 
-> If you want to master claude code hooks watch [this video](https://github.com/disler/claude-code-hooks-mastery)
+> If you want to master opencode code hooks watch [this video](https://github.com/disler/opencode-hooks-mastery)
 
-The hook system intercepts Claude Code lifecycle events:
+The hook system intercepts OpenCode lifecycle events:
 
 - **`send_event.py`**: Core script that sends event data to the observability server
   - Supports all 12 hook event types with event-specific field forwarding
@@ -293,7 +293,7 @@ Vue 3 application with real-time visualization:
 
 ## 🔄 Data Flow
 
-1. **Event Generation**: Claude Code executes an action (tool use, notification, etc.)
+1. **Event Generation**: OpenCode executes an action (tool use, notification, etc.)
 2. **Hook Activation**: Corresponding hook script runs based on `settings.json` configuration
 3. **Data Collection**: Hook script gathers context (tool name, inputs, outputs, session ID)
 4. **Transmission**: `send_event.py` sends JSON payload to server via HTTP POST
@@ -322,7 +322,7 @@ Vue 3 application with real-time visualization:
 
 ### UserPromptSubmit Event (v1.0.54+)
 
-The `UserPromptSubmit` hook captures every user prompt before Claude processes it. In the UI:
+The `UserPromptSubmit` hook captures every user prompt before OpenCode processes it. In the UI:
 - Displays as `Prompt: "user's message"` in italic text
 - Shows the actual prompt content inline (truncated to 100 chars)
 - Summary appears on the right side when AI summarization is enabled
@@ -334,10 +334,10 @@ The `UserPromptSubmit` hook captures every user prompt before Claude processes i
 
 1. Copy the event sender:
    ```bash
-   cp .claude/hooks/send_event.py YOUR_PROJECT/.claude/hooks/
+   cp .opencode/hooks/send_event.py YOUR_PROJECT/.opencode/hooks/
    ```
 
-2. Add to your `.claude/settings.json`:
+2. Add to your `.opencode/settings.json`:
    ```json
    {
      "hooks": {
@@ -345,7 +345,7 @@ The `UserPromptSubmit` hook captures every user prompt before Claude processes i
          "matcher": ".*",
          "hooks": [{
            "type": "command",
-           "command": "uv run .claude/hooks/send_event.py --source-app YOUR_APP --event-type PreToolUse"
+           "command": "uv run .opencode/hooks/send_event.py --source-app YOUR_APP --event-type PreToolUse"
          }]
        }]
      }
@@ -358,11 +358,11 @@ Already integrated! Hooks run both validation and observability:
 ```json
 {
   "type": "command",
-  "command": "uv run .claude/hooks/pre_tool_use.py"
+  "command": "uv run .opencode/hooks/pre_tool_use.py"
 },
 {
   "type": "command",
-  "command": "uv run .claude/hooks/send_event.py --source-app cc-hook-multi-agent-obvs --event-type PreToolUse"
+  "command": "uv run .opencode/hooks/send_event.py --source-app cc-hook-multi-agent-obvs --event-type PreToolUse"
 }
 ```
 
@@ -399,7 +399,7 @@ just hook-test pre_tool_use
 Copy `.env.sample` to `.env` in the project root and fill in your API keys:
 
 **Application Root** (`.env` file):
-- `ANTHROPIC_API_KEY` – Anthropic Claude API key (required)
+- `ANTHROPIC_API_KEY` – Anthropic OpenCode API key (required)
 - `ENGINEER_NAME` – Your name (for logging/identification)
 - `OPENAI_API_KEY` – OpenAI API key (optional)
 - `ELEVENLABS_API_KEY` – ElevenLabs API key (optional, for TTS)
@@ -415,12 +415,12 @@ Copy `.env.sample` to `.env` in the project root and fill in your API keys:
 
 ## 🤖 Agent Teams
 
-This project supports Claude Code Agent Teams for orchestrating multi-agent workflows. Teams are enabled via the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` environment variable in `.claude/settings.json`.
+This project supports OpenCode Agent Teams for orchestrating multi-agent workflows. Teams are enabled via the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` environment variable in `.opencode/settings.json`.
 
 ### Team Agents
 
-- **Builder** (`.claude/agents/team/builder.md`): Engineering agent that executes one task at a time. Includes PostToolUse hooks for `ruff` and `ty` validation on Write/Edit operations.
-- **Validator** (`.claude/agents/team/validator.md`): Read-only validation agent that inspects work without modifying files. Cannot use Write, Edit, or NotebookEdit tools.
+- **Builder** (`.opencode/agents/team/builder.md`): Engineering agent that executes one task at a time. Includes PostToolUse hooks for `ruff` and `ty` validation on Write/Edit operations.
+- **Validator** (`.opencode/agents/team/validator.md`): Read-only validation agent that inspects work without modifying files. Cannot use Write, Edit, or NotebookEdit tools.
 
 ### Planning with Teams
 
@@ -439,9 +439,9 @@ Execute a plan with:
 
 ## 🔭 Multi-Agent Orchestration & Observability
 
-[![Multi-Agent Orchestration with Claude Code](images/claude-code-multi-agent-orchestration.png)](https://youtu.be/RpUTF_U4kiw)
+[![Multi-Agent Orchestration with OpenCode](images/opencode-multi-agent-orchestration.png)](https://youtu.be/RpUTF_U4kiw)
 
-The true constraint of agentic engineering is no longer what the models can do — it's our ability to prompt engineer and context engineer the outcomes we need, and build them into reusable systems. Multi-agent orchestration changes the game by letting you spin up teams of specialized agents that each focus on one task extraordinarily well, work in parallel, and shut down when done. See the official [Claude Code Agent Teams documentation](https://code.claude.com/docs/en/agent-teams) for the full reference.
+The true constraint of agentic engineering is no longer what the models can do — it's our ability to prompt engineer and context engineer the outcomes we need, and build them into reusable systems. Multi-agent orchestration changes the game by letting you spin up teams of specialized agents that each focus on one task extraordinarily well, work in parallel, and shut down when done. See the official [OpenCode Agent Teams documentation](https://code.opencode.com/docs/en/agent-teams) for the full reference.
 
 ### The Orchestration Workflow
 
@@ -478,7 +478,7 @@ This is what separates engineers from vibe coders: understanding what's happenin
 
 - **Server**: Bun, TypeScript, SQLite
 - **Client**: Vue 3, TypeScript, Vite, Tailwind CSS
-- **Hooks**: Python 3.11+, Astral uv, TTS (ElevenLabs or OpenAI), LLMs (Claude or OpenAI)
+- **Hooks**: Python 3.11+, Astral uv, TTS (ElevenLabs or OpenAI), LLMs (OpenCode or OpenAI)
 - **Communication**: HTTP REST, WebSocket
 
 ## Master AI **Agentic Coding**

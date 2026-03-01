@@ -101,11 +101,11 @@ health:
 
 # Test a hook script directly (e.g. just hook-test pre_tool_use)
 hook-test name:
-    echo '{"session_id":"test-hook","tool_name":"Bash"}' | uv run {{project_root}}/.claude/hooks/{{name}}.py
+    echo '{"session_id":"test-hook","tool_name":"Bash"}' | uv run {{project_root}}/.opencode/hooks/{{name}}.py
 
 # List all hook scripts
 hooks:
-    @ls -1 {{project_root}}/.claude/hooks/*.py | xargs -I{} basename {} .py
+    @ls -1 {{project_root}}/.opencode/hooks/*.py | xargs -I{} basename {} .py
 
 # ─── Open ────────────────────────────────────────────────
 

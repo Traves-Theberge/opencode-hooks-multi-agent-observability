@@ -1,10 +1,10 @@
-# How to Extract and Send Model Name from Claude Code Hooks
+# How to Extract and Send Model Name from OpenCode Hooks
 
-This guide explains how to extract the model name from Claude Code transcripts and send it with your hook events, including implementing an efficient caching system.
+This guide explains how to extract the model name from OpenCode transcripts and send it with your hook events, including implementing an efficient caching system.
 
 ## Overview
 
-Claude Code hooks receive a `transcript_path` in their stdin, which points to a `.jsonl` file containing the conversation history. The model name is only available in **assistant messages**, not user messages or hook metadata.
+OpenCode hooks receive a `transcript_path` in their stdin, which points to a `.jsonl` file containing the conversation history. The model name is only available in **assistant messages**, not user messages or hook metadata.
 
 ## The Problem
 
@@ -19,16 +19,16 @@ We implement a 60-second cache to avoid repeatedly parsing the transcript file.
 
 ### Cache Strategy
 
-1. **Cache Location**: `.claude/data/claude-model-cache/{session_id}.json`
-   - **Important**: Cache is stored **locally in your project** at `.claude/data/`, NOT globally in `~/.claude/`
+1. **Cache Location**: `.opencode/data/opencode-model-cache/{session_id}.json`
+   - **Important**: Cache is stored **locally in your project** at `.opencode/data/`, NOT globally in `~/.opencode/`
    - Uses relative path from `model_extractor.py` file location
    - Each project has its own independent cache
 2. **Cache TTL**: 60 seconds (configurable)
-3. **Cache Key**: Session ID (unique per Claude Code session)
+3. **Cache Key**: Session ID (unique per OpenCode session)
 4. **Cache Structure**:
 ```json
 {
-  "model": "claude-haiku-4-5-20251001",
+  "model": "opencode-flash-1-5-20251001",
   "timestamp": 1729123456789,
   "ttl": 60
 }
@@ -49,12 +49,12 @@ We implement a 60-second cache to avoid repeatedly parsing the transcript file.
 
 ### Step 1: Create Model Extractor Utility
 
-Create `.claude/hooks/utils/model_extractor.py`:
+Create `.opencode/hooks/utils/model_extractor.py`:
 
 ```python
 """
 Model Extractor Utility
-Extracts model name from Claude Code transcript with caching.
+Extracts model name from OpenCode transcript with caching.
 """
 
 import json
@@ -68,17 +68,17 @@ def get_model_from_transcript(session_id: str, transcript_path: str, ttl: int = 
     Extract model name from transcript with file-based caching.
 
     Args:
-        session_id: Claude session ID
+        session_id: OpenCode session ID
         transcript_path: Path to the .jsonl transcript file
         ttl: Cache time-to-live in seconds (default: 60)
 
     Returns:
-        Model name string (e.g., "claude-haiku-4-5-20251001") or empty string if not found
+        Model name string (e.g., "opencode-flash-1-5-20251001") or empty string if not found
     """
     # Set up cache directory relative to this file location
-    # __file__ is .claude/hooks/utils/model_extractor.py
-    # We want .claude/data/claude-model-cache/
-    cache_dir = Path(__file__).parent.parent.parent / "data" / "claude-model-cache"
+    # __file__ is .opencode/hooks/utils/model_extractor.py
+    # We want .opencode/data/opencode-model-cache/
+    cache_dir = Path(__file__).parent.parent.parent / "data" / "opencode-model-cache"
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     cache_file = cache_dir / f"{session_id}.json"
@@ -151,7 +151,7 @@ def extract_model_from_transcript(transcript_path: str) -> str:
                 # {
                 #   "type": "assistant",
                 #   "message": {
-                #     "model": "claude-haiku-4-5-20251001",
+                #     "model": "opencode-flash-1-5-20251001",
                 #     "role": "assistant",
                 #     "content": [...]
                 #   }
@@ -224,7 +224,7 @@ def main():
     # Send to your observability server
     send_event_to_server(event_data)
 
-    # Always exit 0 to not block Claude Code
+    # Always exit 0 to not block OpenCode
     sys.exit(0)
 
 
@@ -245,14 +245,14 @@ Send this JSON structure to your observability server:
   "hook_event_type": "PreToolUse",
   "payload": {
     "session_id": "3a7ccba5-5ef4-4bbd-8073-1006351b010e",
-    "transcript_path": "/Users/.../.claude/projects/.../session.jsonl",
+    "transcript_path": "/Users/.../.opencode/projects/.../session.jsonl",
     "cwd": "/path/to/project",
     "hook_event_name": "PreToolUse",
     "tool_name": "Write",
     "tool_input": { ... }
   },
   "timestamp": 1729123456789,
-  "model_name": "claude-haiku-4-5-20251001"
+  "model_name": "opencode-flash-1-5-20251001"
 }
 ```
 
@@ -261,7 +261,7 @@ Send this JSON structure to your observability server:
 | Field             | Type   | Required | Description                                           |
 | ----------------- | ------ | -------- | ----------------------------------------------------- |
 | `source_app`      | string | Yes      | Your application identifier (e.g., "my-agent-system") |
-| `session_id`      | string | Yes      | Claude Code session ID                                |
+| `session_id`      | string | Yes      | OpenCode session ID                                |
 | `hook_event_type` | string | Yes      | Hook event type (PreToolUse, PostToolUse, etc.)       |
 | `payload`         | object | Yes      | Original hook input data from stdin                   |
 | `timestamp`       | number | Yes      | Unix timestamp in milliseconds                        |
@@ -275,12 +275,12 @@ Send this JSON structure to your observability server:
 
 ```
 1. Hook fires → send_event.py runs
-2. Check cache: .claude/data/claude-model-cache/{session_id}.json (in project)
+2. Check cache: .opencode/data/opencode-model-cache/{session_id}.json (in project)
 3. Cache file doesn't exist
 4. Read transcript file (3+ MB)
 5. Parse JSONL line by line in REVERSE
 6. Find first (most recent) assistant message with "model" field
-7. Extract model: "claude-haiku-4-5-20251001"
+7. Extract model: "opencode-flash-1-5-20251001"
 8. Write to cache file with timestamp
 9. Send event with model_name to server
 ```
@@ -289,7 +289,7 @@ Send this JSON structure to your observability server:
 
 ```
 1. Hook fires → send_event.py runs
-2. Check cache: .claude/data/claude-model-cache/{session_id}.json (in project)
+2. Check cache: .opencode/data/opencode-model-cache/{session_id}.json (in project)
 3. Cache file exists
 4. Read cache (tiny JSON file, < 1 KB)
 5. Check timestamp: current_time - cache_timestamp < 60s?
@@ -302,7 +302,7 @@ Send this JSON structure to your observability server:
 
 ```
 1. Hook fires → send_event.py runs
-2. Check cache: .claude/data/claude-model-cache/{session_id}.json (in project)
+2. Check cache: .opencode/data/opencode-model-cache/{session_id}.json (in project)
 3. Cache file exists
 4. Read cache
 5. Check timestamp: current_time - cache_timestamp < 60s?
@@ -357,16 +357,16 @@ Send this JSON structure to your observability server:
 ```bash
 # Run a hook manually
 echo '{"session_id":"test-123","transcript_path":"/path/to/transcript.jsonl"}' | \
-  python .claude/hooks/send_event.py
+  python .opencode/hooks/send_event.py
 
 # Check cache was created (in project directory)
-cat .claude/data/claude-model-cache/test-123.json
+cat .opencode/data/opencode-model-cache/test-123.json
 ```
 
 Expected output:
 ```json
 {
-  "model": "claude-haiku-4-5-20251001",
+  "model": "opencode-flash-1-5-20251001",
   "timestamp": 1729123456.789,
   "ttl": 60
 }
@@ -376,21 +376,21 @@ Expected output:
 
 ```bash
 # Run the same hook twice quickly
-time python .claude/hooks/send_event.py < input.json  # ~50ms (cache miss)
-time python .claude/hooks/send_event.py < input.json  # ~1ms (cache hit)
+time python .opencode/hooks/send_event.py < input.json  # ~50ms (cache miss)
+time python .opencode/hooks/send_event.py < input.json  # ~1ms (cache hit)
 ```
 
 ### Test 3: Verify Cache Expiration
 
 ```bash
 # Run hook
-python .claude/hooks/send_event.py < input.json
+python .opencode/hooks/send_event.py < input.json
 
 # Wait 61 seconds
 sleep 61
 
 # Run again - should re-parse transcript
-python .claude/hooks/send_event.py < input.json
+python .opencode/hooks/send_event.py < input.json
 ```
 
 ---
@@ -415,7 +415,7 @@ print(f"Extracted model: {model_name}", file=sys.stderr)
 ### Cache Not Working
 
 **Check**:
-1. Cache directory exists in project: `.claude/data/claude-model-cache/`
+1. Cache directory exists in project: `.opencode/data/opencode-model-cache/`
 2. Cache directory is writable (check project permissions)
 3. Session ID is consistent across hook calls
 
@@ -436,7 +436,7 @@ print(f"Cache age: {cache_age}s (TTL: {ttl}s)", file=sys.stderr)
 
 **Optimize**:
 - Increase TTL to 120s if model changes are very rare
-- Use a faster storage location (e.g., `/tmp/` instead of `.claude/data/`)
+- Use a faster storage location (e.g., `/tmp/` instead of `.opencode/data/`)
 - Consider in-memory caching if running a persistent service
 
 ---
@@ -478,7 +478,7 @@ def get_model_from_transcript_memory(session_id: str, transcript_path: str) -> s
 ## Summary
 
 1. **Extract model from transcript** - Read `.jsonl` file, find most recent assistant message
-2. **Implement 60-second cache** - Store in `.claude/data/claude-model-cache/{session_id}.json` (in project)
+2. **Implement 60-second cache** - Store in `.opencode/data/opencode-model-cache/{session_id}.json` (in project)
 3. **Send model_name with events** - Include in your event payload to observability server
 4. **Handle empty model** - Some hooks fire before first assistant message
 

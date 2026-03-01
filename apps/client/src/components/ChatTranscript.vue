@@ -241,7 +241,7 @@ const isDetailsExpanded = (index: number) => {
 };
 
 const chatItems = computed(() => {
-  // Handle both simple chat format and complex claude-code format
+  // Handle both simple chat format and complex opencode format
   if (props.chat.length > 0 && props.chat[0].type) {
     // Complex format from chat.json
     return props.chat;

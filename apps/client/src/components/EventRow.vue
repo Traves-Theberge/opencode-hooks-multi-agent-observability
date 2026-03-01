@@ -486,13 +486,13 @@ const formatTime = (timestamp?: number) => {
   return date.toLocaleTimeString();
 };
 
-// Format model name for display (e.g., "claude-haiku-4-5-20251001" -> "haiku-4-5")
+// Format model name for display (e.g., "opencode-flash-1-5-20251001" -> "flash-1-5")
 const formatModelName = (name: string | null | undefined): string => {
   if (!name) return '';
 
   // Extract model family and version
-  // "claude-haiku-4-5-20251001" -> "haiku-4-5"
-  // "claude-sonnet-4-5-20250929" -> "sonnet-4-5"
+  // "opencode-flash-1-5-20251001" -> "flash-1-5"
+  // "opencode-pro-1-5-20250929" -> "pro-1-5"
   const parts = name.split('-');
   if (parts.length >= 4) {
     return `${parts[1]}-${parts[2]}-${parts[3]}`;

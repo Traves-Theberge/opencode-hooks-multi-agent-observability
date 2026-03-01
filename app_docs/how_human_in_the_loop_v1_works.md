@@ -461,7 +461,7 @@ hitl_data.model_dump(by_alias=True)  # Uses camelCase for API
 
 - **Server API types**: `apps/server/src/types.ts`
 - **Client UI component**: `apps/client/src/components/EventRow.vue`
-- **Example implementation**: `.claude/hooks/utils/hitl.py`
+- **Example implementation**: `.opencode/hooks/utils/hitl.py`
 
 ---
 

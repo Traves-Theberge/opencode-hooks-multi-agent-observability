@@ -242,13 +242,13 @@ results/
 .history/
 .svn/
 CVS/
-claude-output.json
-.claude/commands/feature.md
+opencode-output.json
+.opencode/commands/feature.md
 
 # Specs - ignore everything except specific plan files
 specs/*
-!specs/plan_new_feature_sonnet45.md
-!specs/plan_new_feature_haiku45.md
+!specs/plan_new_feature_opencode-pro.md
+!specs/plan_new_feature_opencode-flash.md
 
 # App docs - ignore everything
 app_docs/
@@ -257,15 +257,15 @@ app_docs/
 
 # AI docs - ignore everything except specific answer files
 ai_docs/*
-!ai_docs/sonnet45/
-!ai_docs/haiku45/
-ai_docs/sonnet45/*
-ai_docs/haiku45/*
-!ai_docs/sonnet45/answers.md
-!ai_docs/haiku45/answers.md
+!ai_docs/opencode-pro/
+!ai_docs/opencode-flash/
+ai_docs/opencode-pro/*
+ai_docs/opencode-flash/*
+!ai_docs/opencode-pro/answers.md
+!ai_docs/opencode-flash/answers.md
 
-# Claude Code session data
-.claude/data/
+# OpenCode session data
+.opencode/data/
 
 
 trees/
