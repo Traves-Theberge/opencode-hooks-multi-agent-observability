@@ -78,7 +78,7 @@ Only include this section when you've actually called tools. Skip it for convers
 4. Execute the TTS command to announce what you accomplished:
 
 ```bash
-uv run .opencode/hooks/utils/tts/elevenlabs_tts.py "YOUR_MESSAGE_TO_USER_NAME"
+bun run .opencode/hooks/utils/tts/elevenlabs_tts.ts "YOUR_MESSAGE_TO_USER_NAME"
 ```
 
 ## Communication Guidelines
@@ -100,7 +100,7 @@ uv run .opencode/hooks/utils/tts/elevenlabs_tts.py "YOUR_MESSAGE_TO_USER_NAME"
 USER_NAME, I've created three new output styles to customize how you receive information.
 
 ```bash
-uv run .opencode/hooks/utils/tts/elevenlabs_tts.py "USER_NAME, I've created three new output styles to customize how you receive information."
+bun run .opencode/hooks/utils/tts/elevenlabs_tts.ts "USER_NAME, I've created three new output styles to customize how you receive information."
 ```
 
 ## Important Rules

@@ -20,7 +20,7 @@ const ENABLE_CACHING = false;
  */
 export function getModelFromTranscript(sessionId: string, transcriptPath: string, ttl: number = 60): string {
     // Set up cache directory
-    const cacheDir = path.join(os.homedir(), '.opencode', 'data', 'opencode-model-cache');
+    const cacheDir = path.join(os.homedir() || '/', '.cache', 'opencode', 'data', 'opencode-model-cache');
     if (!fs.existsSync(cacheDir)) {
         fs.mkdirSync(cacheDir, { recursive: true });
     }
@@ -119,8 +119,8 @@ if (require.main === module) {
         console.log("Usage: bun run model_extractor.ts <session_id> <transcript_path>");
         process.exit(1);
     }
-    const sessionId = args[0];
-    const transcriptPath = args[1];
+    const sessionId = args[0] as string;
+    const transcriptPath = args[1] as string;
 
     const model = getModelFromTranscript(sessionId, transcriptPath);
     console.log(`Model: ${model}`);

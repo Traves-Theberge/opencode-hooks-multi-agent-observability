@@ -52,11 +52,11 @@ To integrate the observability hooks into your projects:
          "hooks": [
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/pre_tool_use.py"
+             "command": "uv run .opencode/hooks/pre_tool_use.ts"
            },
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/send_event.py --source-app YOUR_PROJECT_NAME --event-type PreToolUse --summarize"
+             "command": "uv run .opencode/hooks/send_event.ts --source-app YOUR_PROJECT_NAME --event-type PreToolUse --summarize"
            }
          ]
        }],
@@ -65,11 +65,11 @@ To integrate the observability hooks into your projects:
          "hooks": [
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/post_tool_use.py"
+             "command": "uv run .opencode/hooks/post_tool_use.ts"
            },
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/send_event.py --source-app YOUR_PROJECT_NAME --event-type PostToolUse --summarize"
+             "command": "uv run .opencode/hooks/send_event.ts --source-app YOUR_PROJECT_NAME --event-type PostToolUse --summarize"
            }
          ]
        }],
@@ -77,11 +77,11 @@ To integrate the observability hooks into your projects:
          "hooks": [
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/user_prompt_submit.py --log-only"
+             "command": "uv run .opencode/hooks/user_prompt_submit.ts --log-only"
            },
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/send_event.py --source-app YOUR_PROJECT_NAME --event-type UserPromptSubmit --summarize"
+             "command": "uv run .opencode/hooks/send_event.ts --source-app YOUR_PROJECT_NAME --event-type UserPromptSubmit --summarize"
            }
          ]
        }]
@@ -201,7 +201,7 @@ opencode-hooks-multi-agent-observability/
 │   │   └── plan_w_team.md # Team-based planning command
 │   │
 │   ├── status_lines/      # Status line scripts
-│   │   └── status_line_v6.py # Context window usage display
+│   │   └── status_line_v6.ts # Context window usage display
 │   │
 │   └── settings.json      # Hook configuration (all 12 events)
 │
@@ -334,7 +334,7 @@ The `UserPromptSubmit` hook captures every user prompt before OpenCode processes
 
 1. Copy the event sender:
    ```bash
-   cp .opencode/hooks/send_event.py YOUR_PROJECT/.opencode/hooks/
+   cp .opencode/hooks/send_event.ts YOUR_PROJECT/.opencode/hooks/
    ```
 
 2. Add to your `.opencode/settings.json`:
@@ -345,7 +345,7 @@ The `UserPromptSubmit` hook captures every user prompt before OpenCode processes
          "matcher": ".*",
          "hooks": [{
            "type": "command",
-           "command": "uv run .opencode/hooks/send_event.py --source-app YOUR_APP --event-type PreToolUse"
+           "command": "uv run .opencode/hooks/send_event.ts --source-app YOUR_APP --event-type PreToolUse"
          }]
        }]
      }
@@ -358,11 +358,11 @@ Already integrated! Hooks run both validation and observability:
 ```json
 {
   "type": "command",
-  "command": "uv run .opencode/hooks/pre_tool_use.py"
+  "command": "uv run .opencode/hooks/pre_tool_use.ts"
 },
 {
   "type": "command",
-  "command": "uv run .opencode/hooks/send_event.py --source-app cc-hook-multi-agent-obvs --event-type PreToolUse"
+  "command": "uv run .opencode/hooks/send_event.ts --source-app cc-hook-multi-agent-obvs --event-type PreToolUse"
 }
 ```
 

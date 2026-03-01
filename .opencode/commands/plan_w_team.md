@@ -8,12 +8,12 @@ hooks:
     - hooks:
         - type: command
           command: >-
-            uv run $CLAUDE_PROJECT_DIR/.opencode/hooks/validators/validate_new_file.py
+            bun run .opencode/hooks/validators/validate_new_file.ts
             --directory specs
             --extension .md
         - type: command
           command: >-
-            uv run $CLAUDE_PROJECT_DIR/.opencode/hooks/validators/validate_file_contains.py
+            bun run .opencode/hooks/validators/validate_file_contains.ts
             --directory specs
             --extension .md
             --contains '## Task Description'
