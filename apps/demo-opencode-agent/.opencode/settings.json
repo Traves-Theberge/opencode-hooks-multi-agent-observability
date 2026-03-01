@@ -6,11 +6,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/pre_tool_use.py"
+            "command": "bun run .opencode/hooks/pre_tool_use.ts"
           },
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/send_event.py --source-app demo-agent --event-type PreToolUse --summarize"
+            "command": "bun run .opencode/hooks/send_event.ts --source-app demo-agent --event-type PreToolUse --summarize"
           }
         ]
       }
@@ -21,11 +21,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/post_tool_use.py"
+            "command": "bun run .opencode/hooks/post_tool_use.ts"
           },
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/send_event.py --source-app demo-agent --event-type PostToolUse --summarize"
+            "command": "bun run .opencode/hooks/send_event.ts --source-app demo-agent --event-type PostToolUse --summarize"
           }
         ]
       }
@@ -36,11 +36,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/notification.py --notify "
+            "command": "bun run .opencode/hooks/notification.ts --notify "
           },
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/send_event.py --source-app demo-agent --event-type Notification --summarize"
+            "command": "bun run .opencode/hooks/send_event.ts --source-app demo-agent --event-type Notification --summarize"
           }
         ]
       }
@@ -51,11 +51,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/stop.py --chat"
+            "command": "bun run .opencode/hooks/stop.ts --chat"
           },
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/send_event.py --source-app demo-agent --event-type Stop --add-chat"
+            "command": "bun run .opencode/hooks/send_event.ts --source-app demo-agent --event-type Stop --add-chat"
           }
         ]
       }
@@ -66,11 +66,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/subagent_stop.py"
+            "command": "bun run .opencode/hooks/subagent_stop.ts"
           },
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/send_event.py --source-app demo-agent --event-type SubagentStop"
+            "command": "bun run .opencode/hooks/send_event.ts --source-app demo-agent --event-type SubagentStop"
           }
         ]
       }
@@ -81,7 +81,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/send_event.py --source-app demo-agent --event-type PreCompact"
+            "command": "bun run .opencode/hooks/send_event.ts --source-app demo-agent --event-type PreCompact"
           }
         ]
       }
@@ -91,11 +91,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/user_prompt_submit.py --log-only"
+            "command": "bun run .opencode/hooks/user_prompt_submit.ts --log-only"
           },
           {
             "type": "command",
-            "command": "uv run .opencode/hooks/send_event.py --source-app demo-agent --event-type UserPromptSubmit --summarize"
+            "command": "bun run .opencode/hooks/send_event.ts --source-app demo-agent --event-type UserPromptSubmit --summarize"
           }
         ]
       }
