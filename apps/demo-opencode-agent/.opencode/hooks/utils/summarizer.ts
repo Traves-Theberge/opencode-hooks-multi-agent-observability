@@ -46,7 +46,7 @@ Generate the summary based on the payload:`;
     if (summary) {
         summary = summary.trim().replace(/^["']|["']$/g, '').replace(/\.$/, '').trim();
         // Take only the first line if multiple
-        summary = summary.split('\n')[0]?.trim() || '';
+        summary = summary.split('\n')[0].trim();
         // Ensure it's not too long
         if (summary.length > 100) {
             summary = summary.substring(0, 97) + "...";

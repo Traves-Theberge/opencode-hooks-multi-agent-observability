@@ -8,16 +8,6 @@ import { ensureSessionLogDir } from './utils/constants';
 
 dotenv.config();
 
-function getCompletionMessages(): string[] {
-    return [
-        "Work complete!",
-        "All done!",
-        "Task finished!",
-        "Job complete!",
-        "Ready for next task!",
-    ];
-}
-
 function getTtsScriptPath(): string | null {
     const ttsDir = path.join(__dirname, 'utils', 'tts');
 
@@ -37,43 +27,12 @@ function getTtsScriptPath(): string | null {
     return null;
 }
 
-function getLlmCompletionMessage(): string {
-    const llmDir = path.join(__dirname, 'utils', 'llm');
-
-    if (process.env.OPENROUTER_API_KEY) {
-        const script = path.join(llmDir, 'openrouter.ts');
-        if (fs.existsSync(script)) {
-            try {
-                const result = spawnSync('bun', ['run', script, '--completion'], { encoding: 'utf8', timeout: 10000 });
-                if (result.status === 0 && result.stdout.trim()) {
-                    return result.stdout.trim();
-                }
-            } catch (e) { }
-        }
-    }
-
-    if (process.env.OPENAI_API_KEY) {
-        const script = path.join(llmDir, 'oai.ts');
-        if (fs.existsSync(script)) {
-            try {
-                const result = spawnSync('bun', ['run', script, '--completion'], { encoding: 'utf8', timeout: 10000 });
-                if (result.status === 0 && result.stdout.trim()) {
-                    return result.stdout.trim();
-                }
-            } catch (e) { }
-        }
-    }
-
-    const messages = getCompletionMessages();
-    return messages[Math.floor(Math.random() * messages.length)] || '';
-}
-
-function announceCompletion() {
+function announceSubagentCompletion() {
     try {
         const ttsScript = getTtsScriptPath();
         if (!ttsScript) return;
 
-        const completionMessage = getLlmCompletionMessage();
+        const completionMessage = "Subagent Complete";
 
         spawnSync('bun', ['run', ttsScript, completionMessage], { timeout: 10000 });
     } catch (e) { }
@@ -107,13 +66,16 @@ async function main() {
 
         const sessionId = inputData.session_id || "";
         const stopHookActive = inputData.stop_hook_active || false;
+        const agentId = inputData.agent_id || "";
+        const agentType = inputData.agent_type || "";
+        const agentTranscriptPath = inputData.agent_transcript_path || "";
 
         if (stopHookActive) {
             process.exit(0);
         }
 
         const logDir = ensureSessionLogDir(sessionId);
-        const logPath = path.join(logDir, 'stop.json');
+        const logPath = path.join(logDir, 'subagent_stop.json');
 
         let logData: any[] = [];
         if (fs.existsSync(logPath)) {
@@ -127,8 +89,11 @@ async function main() {
 
         const logEntry = {
             session_id: sessionId,
-            hook_event_name: inputData.hook_event_name || 'Stop',
-            stop_hook_active: stopHookActive
+            hook_event_name: inputData.hook_event_name || 'SubagentStop',
+            stop_hook_active: stopHookActive,
+            agent_id: agentId,
+            agent_type: agentType,
+            agent_transcript_path: agentTranscriptPath
         };
         logData.push(logEntry);
 
@@ -154,7 +119,7 @@ async function main() {
         }
 
         if (values['notify']) {
-            announceCompletion();
+            announceSubagentCompletion();
         }
 
         process.exit(0);

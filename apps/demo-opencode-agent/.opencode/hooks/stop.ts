@@ -65,7 +65,7 @@ function getLlmCompletionMessage(): string {
     }
 
     const messages = getCompletionMessages();
-    return messages[Math.floor(Math.random() * messages.length)] || '';
+    return messages[Math.floor(Math.random() * messages.length)];
 }
 
 function announceCompletion() {

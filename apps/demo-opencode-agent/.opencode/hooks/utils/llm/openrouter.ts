@@ -75,9 +75,9 @@ Generate ONE completion message:`;
 
     // Clean up response - remove quotes and extra formatting
     if (response) {
-        let cleanResponse = response.trim().replace(/^["']|["']$/g, '').trim();
+        response = response.trim().replace(/^["']|["']$/g, '').trim();
         // Take first line if multiple lines
-        response = cleanResponse.split('\n')[0]?.trim() || '';
+        response = response.split('\n')[0].trim();
     }
 
     return response;

@@ -27,7 +27,7 @@ function main() {
             "Ready for next task!"
         ];
         // Pick a random message
-        text = completionMessages[Math.floor(Math.random() * completionMessages.length)] || 'Task finished!';
+        text = completionMessages[Math.floor(Math.random() * completionMessages.length)];
     }
 
     console.log(`🎯 Text: ${text}`);

@@ -82,10 +82,6 @@ async function main() {
 
         // Check the most recently modified file
         const targetFile = matchingFiles[0];
-        if (!targetFile) {
-            console.error(`No ${ext} files found in '${values.directory}'`);
-            process.exit(2);
-        }
         const content = fs.readFileSync(targetFile.fullPath, 'utf-8');
 
         const missing = values.contains.filter((s: string) => !content.includes(s));

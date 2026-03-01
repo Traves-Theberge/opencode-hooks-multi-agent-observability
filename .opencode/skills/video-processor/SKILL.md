@@ -33,20 +33,20 @@ This skill provides video processing utilities including audio extraction, forma
   whisper --help
   ```
 
-**Python packages** (included in script via PEP 723):
-- click (CLI framework)
-- ffmpeg-python (Python wrapper for FFmpeg)
+**Dependencies**:
+- **ffmpeg-static** or system FFmpeg
+- **openai-whisper** (Whisper CLI)
 
 ### Workflow
 
-Use the `scripts/video_processor.py` script for all video processing tasks. The script provides a simple CLI with the following commands:
+Use the `scripts/video_processor.ts` script for all video processing tasks. The script provides a simple CLI with the following commands:
 
 #### 1. **Extract Audio from Video**
 
 Extract the audio track from a video file:
 
 ```bash
-uv run .opencode/skills/video-processor/scripts/video_processor.py extract-audio input.mp4 output.wav
+bun run .opencode/skills/video-processor/scripts/video_processor.ts extract-audio input.mp4 output.wav
 ```
 
 Options:
@@ -58,7 +58,7 @@ Options:
 Convert any video file to MP4 format:
 
 ```bash
-uv run .opencode/skills/video-processor/scripts/video_processor.py to-mp4 input.avi output.mp4
+bun run .opencode/skills/video-processor/scripts/video_processor.ts to-mp4 input.avi output.mp4
 ```
 
 Options:
@@ -70,7 +70,7 @@ Options:
 Convert any video file to WebM format (web-optimized):
 
 ```bash
-uv run .opencode/skills/video-processor/scripts/video_processor.py to-webm input.mp4 output.webm
+bun run .opencode/skills/video-processor/scripts/video_processor.ts to-webm input.mp4 output.webm
 ```
 
 Options:
@@ -83,10 +83,10 @@ Transcribe audio or video files to text using OpenAI's Whisper model:
 
 ```bash
 # Transcribe video file (audio will be extracted automatically)
-uv run .opencode/skills/video-processor/scripts/video_processor.py transcribe input.mp4 transcript.txt
+bun run .opencode/skills/video-processor/scripts/video_processor.ts transcribe input.mp4 transcript.txt
 
 # Transcribe audio file directly
-uv run .opencode/skills/video-processor/scripts/video_processor.py transcribe audio.wav transcript.txt
+bun run .opencode/skills/video-processor/scripts/video_processor.ts transcribe audio.wav transcript.txt
 ```
 
 Options:
@@ -111,13 +111,13 @@ Process a video end-to-end:
 
 ```bash
 # 1. Extract audio for analysis
-uv run .opencode/skills/video-processor/scripts/video_processor.py extract-audio lecture.mp4 lecture.wav
+bun run .opencode/skills/video-processor/scripts/video_processor.ts extract-audio lecture.mp4 lecture.wav
 
 # 2. Transcribe to SRT subtitles
-uv run .opencode/skills/video-processor/scripts/video_processor.py transcribe lecture.mp4 lecture.srt --format srt --model small
+bun run .opencode/skills/video-processor/scripts/video_processor.ts transcribe lecture.mp4 lecture.srt --format srt --model small
 
 # 3. Convert to web format
-uv run .opencode/skills/video-processor/scripts/video_processor.py to-webm lecture.mp4 lecture.webm
+bun run .opencode/skills/video-processor/scripts/video_processor.ts to-webm lecture.mp4 lecture.webm
 ```
 
 ### Key Technical Details
@@ -166,7 +166,7 @@ I have an AVI file from my old camera. Can you convert it to MP4?
 You would:
 1. Use the to-mp4 command with default settings:
    ```bash
-   uv run .opencode/skills/video-processor/scripts/video_processor.py to-mp4 old_video.avi output.mp4
+   bun run .opencode/skills/video-processor/scripts/video_processor.ts to-mp4 old_video.avi output.mp4
    ```
 2. Confirm the conversion completed successfully
 3. Inform the user about the output file location
@@ -181,11 +181,11 @@ I recorded a lecture video and need a transcript. Can you extract the audio and 
 You would:
 1. First extract the audio:
    ```bash
-   uv run .opencode/skills/video-processor/scripts/video_processor.py extract-audio lecture.mp4 lecture.wav
+   bun run .opencode/skills/video-processor/scripts/video_processor.ts extract-audio lecture.mp4 lecture.wav
    ```
 2. Then transcribe using the base model (good balance of speed/accuracy):
    ```bash
-   uv run .opencode/skills/video-processor/scripts/video_processor.py transcribe lecture.mp4 transcript.txt --model base
+   bun run .opencode/skills/video-processor/scripts/video_processor.ts transcribe lecture.mp4 transcript.txt --model base
    ```
 3. Share the transcript.txt file with the user
 
@@ -199,11 +199,11 @@ I need to put this video on my website with subtitles. Can you help?
 You would:
 1. Convert to WebM for web optimization:
    ```bash
-   uv run .opencode/skills/video-processor/scripts/video_processor.py to-webm presentation.mp4 presentation.webm
+   bun run .opencode/skills/video-processor/scripts/video_processor.ts to-webm presentation.mp4 presentation.webm
    ```
 2. Generate SRT subtitle file:
    ```bash
-   uv run .opencode/skills/video-processor/scripts/video_processor.py transcribe presentation.mp4 subtitles.srt --format srt --model small
+   bun run .opencode/skills/video-processor/scripts/video_processor.ts transcribe presentation.mp4 subtitles.srt --format srt --model small
    ```
 3. Inform user they now have:
    - presentation.webm (web-optimized video)
@@ -219,11 +219,11 @@ I have a Spanish interview video that needs an accurate transcript for publicati
 You would:
 1. Use a larger model with language specified for best accuracy:
    ```bash
-   uv run .opencode/skills/video-processor/scripts/video_processor.py transcribe interview.mp4 transcript.txt --model medium --language es
+   bun run .opencode/skills/video-processor/scripts/video_processor.ts transcribe interview.mp4 transcript.txt --model medium --language es
    ```
 2. Optionally create SRT for review:
    ```bash
-   uv run .opencode/skills/video-processor/scripts/video_processor.py transcribe interview.mp4 transcript.srt --format srt --model medium --language es
+   bun run .opencode/skills/video-processor/scripts/video_processor.ts transcribe interview.mp4 transcript.srt --format srt --model medium --language es
    ```
 3. Review the transcript with the user and make any necessary corrections
 
@@ -242,8 +242,8 @@ You would:
 2. For each video file, run the conversion and transcription:
    ```bash
    # For each video: video1.mp4, video2.mp4, etc.
-   uv run .opencode/skills/video-processor/scripts/video_processor.py to-webm training_videos/video1.mp4 output/video1.webm
-   uv run .opencode/skills/video-processor/scripts/video_processor.py transcribe training_videos/video1.mp4 output/video1.txt --model base
+   bun run .opencode/skills/video-processor/scripts/video_processor.ts to-webm training_videos/video1.mp4 output/video1.webm
+   bun run .opencode/skills/video-processor/scripts/video_processor.ts transcribe training_videos/video1.mp4 output/video1.txt --model base
 
    # Repeat for each file
    ```

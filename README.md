@@ -21,7 +21,7 @@ OpenCode Agents → Hook Scripts → HTTP POST → Bun Server → SQLite → Web
 Before getting started, ensure you have the following installed:
 
 - **[OpenCode](https://docs.anthropic.com/en/docs/opencode)** - Anthropic's official CLI for OpenCode
-- **[Astral uv](https://docs.astral.sh/uv/)** - Fast Python package manager (required for hook scripts)
+- **[Bun runtime](https://docs.astral.sh/uv/)** - Fast JavaScript/TypeScript runtime (required for hook scripts)
 - **[Bun](https://bun.sh/)**, **npm**, or **yarn** - For running the server and client
 - **[just](https://github.com/casey/just)** (optional) - Command runner for project recipes
 - **OpenRouter API Key** - Set as `OPENROUTER_API_KEY` environment variable
@@ -52,11 +52,11 @@ To integrate the observability hooks into your projects:
          "hooks": [
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/pre_tool_use.ts"
+             "command": "bun run .opencode/hooks/pre_tool_use.ts"
            },
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/send_event.ts --source-app YOUR_PROJECT_NAME --event-type PreToolUse --summarize"
+             "command": "bun run .opencode/hooks/send_event.ts --source-app YOUR_PROJECT_NAME --event-type PreToolUse --summarize"
            }
          ]
        }],
@@ -65,11 +65,11 @@ To integrate the observability hooks into your projects:
          "hooks": [
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/post_tool_use.ts"
+             "command": "bun run .opencode/hooks/post_tool_use.ts"
            },
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/send_event.ts --source-app YOUR_PROJECT_NAME --event-type PostToolUse --summarize"
+             "command": "bun run .opencode/hooks/send_event.ts --source-app YOUR_PROJECT_NAME --event-type PostToolUse --summarize"
            }
          ]
        }],
@@ -77,11 +77,11 @@ To integrate the observability hooks into your projects:
          "hooks": [
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/user_prompt_submit.ts --log-only"
+             "command": "bun run .opencode/hooks/user_prompt_submit.ts --log-only"
            },
            {
              "type": "command",
-             "command": "uv run .opencode/hooks/send_event.ts --source-app YOUR_PROJECT_NAME --event-type UserPromptSubmit --summarize"
+             "command": "bun run .opencode/hooks/send_event.ts --source-app YOUR_PROJECT_NAME --event-type UserPromptSubmit --summarize"
            }
          ]
        }]
@@ -175,23 +175,23 @@ opencode-hooks-multi-agent-observability/
 │       └── package.json
 │
 ├── .opencode/                # OpenCode integration
-│   ├── hooks/             # Hook scripts (Python with uv)
-│   │   ├── send_event.py          # Universal event sender (all 12 event types)
-│   │   ├── pre_tool_use.py        # Tool validation, blocking & summarization
-│   │   ├── post_tool_use.py       # Result logging with MCP tool detection
-│   │   ├── post_tool_use_failure.py # Tool failure logging
-│   │   ├── permission_request.py  # Permission request logging
-│   │   ├── notification.py        # User interaction events (type-aware TTS)
-│   │   ├── user_prompt_submit.py  # User prompt logging & validation
-│   │   ├── stop.py               # Session completion (stop_hook_active guard)
-│   │   ├── subagent_stop.py      # Subagent completion with transcript path
-│   │   ├── subagent_start.py     # Subagent lifecycle start tracking
-│   │   ├── pre_compact.py        # Context compaction with custom instructions
-│   │   ├── session_start.py      # Session start with agent type & model
-│   │   ├── session_end.py        # Session end with reason tracking
+│   ├── hooks/             # Hook scripts (TypeScript with Bun)
+│   │   ├── send_event.ts          # Universal event sender (all 12 event types)
+│   │   ├── pre_tool_use.ts        # Tool validation, blocking & summarization
+│   │   ├── post_tool_use.ts       # Result logging with MCP tool detection
+│   │   ├── post_tool_use_failure.ts # Tool failure logging
+│   │   ├── permission_request.ts  # Permission request logging
+│   │   ├── notification.ts        # User interaction events (type-aware TTS)
+│   │   ├── user_prompt_submit.ts  # User prompt logging & validation
+│   │   ├── stop.ts               # Session completion (stop_hook_active guard)
+│   │   ├── subagent_stop.ts      # Subagent completion with transcript path
+│   │   ├── subagent_start.ts     # Subagent lifecycle start tracking
+│   │   ├── pre_compact.ts        # Context compaction with custom instructions
+│   │   ├── session_start.ts      # Session start with agent type & model
+│   │   ├── session_end.ts        # Session end with reason tracking
 │   │   └── validators/           # Stop hook validators
-│   │       ├── validate_new_file.py     # Validate file creation
-│   │       └── validate_file_contains.py # Validate file content sections
+│   │       ├── validate_new_file.ts     # Validate file creation
+│   │       └── validate_file_contains.ts # Validate file content sections
 │   │
 │   ├── agents/team/       # Agent team definitions
 │   │   ├── builder.md     # Engineering agent with linting hooks
@@ -223,25 +223,25 @@ opencode-hooks-multi-agent-observability/
 
 The hook system intercepts OpenCode lifecycle events:
 
-- **`send_event.py`**: Core script that sends event data to the observability server
+- **`send_event.ts`**: Core script that sends event data to the observability server
   - Supports all 12 hook event types with event-specific field forwarding
   - Supports `--add-chat` flag for including conversation history
   - Forwards event-specific fields (`tool_name`, `tool_use_id`, `agent_id`, `notification_type`, etc.) as top-level properties for easier querying
   - Validates server connectivity before sending
 
 - **Event-specific hooks** (12 total): Each implements validation and data extraction
-  - `pre_tool_use.py`: Blocks dangerous commands, validates tool usage, summarizes tool inputs per tool type
-  - `post_tool_use.py`: Captures execution results with MCP tool detection (`mcp_server`, `mcp_tool_name`)
-  - `post_tool_use_failure.py`: Logs tool execution failures
-  - `permission_request.py`: Logs permission request events
-  - `notification.py`: Tracks user interactions with `notification_type`-aware TTS (permission_prompt, idle_prompt, etc.)
-  - `user_prompt_submit.py`: Logs user prompts, supports validation with JSON `{"decision": "block"}` pattern
-  - `stop.py`: Records session completion with `stop_hook_active` guard to prevent infinite loops
-  - `subagent_stop.py`: Monitors subagent task completion with transcript path tracking
-  - `subagent_start.py`: Tracks subagent lifecycle start events
-  - `pre_compact.py`: Tracks context compaction with custom instructions in backup filenames
-  - `session_start.py`: Logs session start with `agent_type`, `model`, and `source` fields
-  - `session_end.py`: Logs session end with reason tracking (including `bypass_permissions_disabled`)
+  - `pre_tool_use.ts`: Blocks dangerous commands, validates tool usage, summarizes tool inputs per tool type
+  - `post_tool_use.ts`: Captures execution results with MCP tool detection (`mcp_server`, `mcp_tool_name`)
+  - `post_tool_use_failure.ts`: Logs tool execution failures
+  - `permission_request.ts`: Logs permission request events
+  - `notification.ts`: Tracks user interactions with `notification_type`-aware TTS (permission_prompt, idle_prompt, etc.)
+  - `user_prompt_submit.ts`: Logs user prompts, supports validation with JSON `{"decision": "block"}` pattern
+  - `stop.ts`: Records session completion with `stop_hook_active` guard to prevent infinite loops
+  - `subagent_stop.ts`: Monitors subagent task completion with transcript path tracking
+  - `subagent_start.ts`: Tracks subagent lifecycle start events
+  - `pre_compact.ts`: Tracks context compaction with custom instructions in backup filenames
+  - `session_start.ts`: Logs session start with `agent_type`, `model`, and `source` fields
+  - `session_end.ts`: Logs session end with reason tracking (including `bypass_permissions_disabled`)
 
 ### 2. Server (`apps/server/`)
 
@@ -296,7 +296,7 @@ Vue 3 application with real-time visualization:
 1. **Event Generation**: OpenCode executes an action (tool use, notification, etc.)
 2. **Hook Activation**: Corresponding hook script runs based on `settings.json` configuration
 3. **Data Collection**: Hook script gathers context (tool name, inputs, outputs, session ID)
-4. **Transmission**: `send_event.py` sends JSON payload to server via HTTP POST
+4. **Transmission**: `send_event.ts` sends JSON payload to server via HTTP POST
 5. **Server Processing**:
    - Validates event structure
    - Stores in SQLite with timestamp
@@ -345,7 +345,7 @@ The `UserPromptSubmit` hook captures every user prompt before OpenCode processes
          "matcher": ".*",
          "hooks": [{
            "type": "command",
-           "command": "uv run .opencode/hooks/send_event.ts --source-app YOUR_APP --event-type PreToolUse"
+           "command": "bun run .opencode/hooks/send_event.ts --source-app YOUR_APP --event-type PreToolUse"
          }]
        }]
      }
@@ -358,11 +358,11 @@ Already integrated! Hooks run both validation and observability:
 ```json
 {
   "type": "command",
-  "command": "uv run .opencode/hooks/pre_tool_use.ts"
+  "command": "bun run .opencode/hooks/pre_tool_use.ts"
 },
 {
   "type": "command",
-  "command": "uv run .opencode/hooks/send_event.ts --source-app cc-hook-multi-agent-obvs --event-type PreToolUse"
+  "command": "bun run .opencode/hooks/send_event.ts --source-app cc-hook-multi-agent-obvs --event-type PreToolUse"
 }
 ```
 
@@ -470,7 +470,7 @@ This is what separates engineers from vibe coders: understanding what's happenin
 
 - Blocks dangerous `rm -rf` commands via `deny_tool()` JSON pattern (allowed only in specific directories)
 - Prevents access to sensitive files (`.env`, private keys)
-- `stop_hook_active` guard in `stop.py` and `subagent_stop.py` prevents infinite hook loops
+- `stop_hook_active` guard in `stop.ts` and `subagent_stop.ts` prevents infinite hook loops
 - Stop hook validators ensure plan files contain required sections before completion
 - Validates all inputs before execution
 
@@ -478,7 +478,7 @@ This is what separates engineers from vibe coders: understanding what's happenin
 
 - **Server**: Bun, TypeScript, SQLite
 - **Client**: Vue 3, TypeScript, Vite, Tailwind CSS
-- **Hooks**: Python 3.11+, Astral uv, TTS (ElevenLabs or OpenAI), LLMs (OpenCode or OpenAI)
+- **Hooks**: TypeScript 5.0+, Bun 1.0+, Node.js 20+, TTS (ElevenLabs or OpenAI), LLMs (OpenRouter or OpenAI)
 - **Communication**: HTTP REST, WebSocket
 
 ## Master AI **Agentic Coding**
