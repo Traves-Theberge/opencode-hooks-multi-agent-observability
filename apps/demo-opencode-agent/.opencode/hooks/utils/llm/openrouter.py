@@ -2,7 +2,7 @@
 # /// script
 # requires-python = ">=3.8"
 # dependencies = [
-#     "anthropic",
+#     "openai",
 #     "python-dotenv",
 # ]
 # ///
@@ -24,23 +24,23 @@ def prompt_llm(prompt_text):
     """
     load_dotenv()
 
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("OPENROUTER_API_KEY")
     if not api_key:
         return None
 
     try:
-        import anthropic
+        import openai
 
-        client = anthropic.Anthropic(api_key=api_key)
+        client = openai.OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
 
-        message = client.messages.create(
-            model="opencode-haiku-4-5-20251001",  # Fast + Cheap Compute
+        response = client.chat.completions.create(
+            model="anthropic/claude-3.5-haiku-20241022",  # OpenRouter requires provider namespace
             max_tokens=100,
             temperature=0.3,
             messages=[{"role": "user", "content": prompt_text}],
         )
 
-        return message.content[0].text.strip()
+        return response.choices[0].message.content.strip()
 
     except Exception:
         return None
@@ -105,9 +105,9 @@ def main():
             if response:
                 print(response)
             else:
-                print("Error calling Anthropic API")
+                print("Error calling OpenRouter API")
     else:
-        print("Usage: ./anth.py 'your prompt here' or ./anth.py --completion")
+        print("Usage: ./openrouter.py 'your prompt here' or ./openrouter.py --completion or ./openrouter.py --agent-name")
 
 
 if __name__ == "__main__":

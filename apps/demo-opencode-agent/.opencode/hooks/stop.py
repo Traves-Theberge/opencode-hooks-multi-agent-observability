@@ -76,13 +76,13 @@ def get_llm_completion_message():
     script_dir = Path(__file__).parent
     llm_dir = script_dir / "utils" / "llm"
 
-    # Try Anthropic second
-    if os.getenv("ANTHROPIC_API_KEY"):
-        anth_script = llm_dir / "anth.py"
-        if anth_script.exists():
+    # Try OpenRouter second
+    if os.getenv("OPENROUTER_API_KEY"):
+        openrouter_script = llm_dir / "openrouter.py"
+        if openrouter_script.exists():
             try:
                 result = subprocess.run(
-                    ["uv", "run", str(anth_script), "--completion"],
+                    ["uv", "run", str(openrouter_script), "--completion"],
                     capture_output=True,
                     text=True,
                     timeout=10,

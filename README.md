@@ -24,7 +24,7 @@ Before getting started, ensure you have the following installed:
 - **[Astral uv](https://docs.astral.sh/uv/)** - Fast Python package manager (required for hook scripts)
 - **[Bun](https://bun.sh/)**, **npm**, or **yarn** - For running the server and client
 - **[just](https://github.com/casey/just)** (optional) - Command runner for project recipes
-- **Anthropic API Key** - Set as `ANTHROPIC_API_KEY` environment variable
+- **OpenRouter API Key** - Set as `OPENROUTER_API_KEY` environment variable
 - **OpenAI API Key** (optional) - For multi-model support with just-prompt MCP tool
 - **ElevenLabs API Key** (optional) - For audio features
 - **Firecrawl API Key** (optional) - For web scraping features
@@ -399,7 +399,7 @@ just hook-test pre_tool_use
 Copy `.env.sample` to `.env` in the project root and fill in your API keys:
 
 **Application Root** (`.env` file):
-- `ANTHROPIC_API_KEY` – Anthropic OpenCode API key (required)
+- `OPENROUTER_API_KEY` – OpenRouter API key (required for LLM fallbacks)
 - `ENGINEER_NAME` – Your name (for logging/identification)
 - `OPENAI_API_KEY` – OpenAI API key (optional)
 - `ELEVENLABS_API_KEY` – ElevenLabs API key (optional, for TTS)
