@@ -21,3 +21,7 @@
 - **Internal APIs & UIs:**
   - Updated Vue.js components (`AgentSwimLane`, `ChatTranscript`, `EventRow`) to target OpenCode variables and text bindings.
   - Adjusted internal script tooling (like `justfile`, `scripts/*`) to properly query the new `.opencode/` pathways.
+- **Hook Scripts Migration to TypeScript:**
+  - Migrated all Python-based OpenCode hooks (`.opencode/hooks/*.py`) and utilities to TypeScript (`.ts`) for better integration with Node.js ecosystems.
+  - Updated configuration (`.opencode/settings.json`) to execute hooks via `bun run` instead of `uv run`.
+  - Replaced Python dependencies (`os`, `json`, `pathlib`) with Node.js standard modules (`fs`, `path`, `process`) across the hook lifecycle methods.
