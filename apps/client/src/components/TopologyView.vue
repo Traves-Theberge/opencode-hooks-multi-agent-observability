@@ -12,7 +12,7 @@
     </div>
 
     <div class="relative w-full flex items-center justify-center z-10 transition-all duration-500" :class="nodes.length > 0 ? 'h-[300px]' : 'h-[120px]'">
-      <svg class="absolute inset-0 w-full h-full overflow-visible" aria-label="Agent Topology Graph">
+      <svg class="absolute inset-0 w-full h-full overflow-visible" aria-label="Agent Topology Graph" viewBox="0 0 100 100" preserveAspectRatio="none">
         <defs>
           <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stop-color="hsl(var(--accent-green))" stop-opacity="0.4" />
@@ -261,7 +261,7 @@ const edges = computed<EdgeData[]>(() => {
 
 // Calculate SVG path for edges (straight line between percentages)
 const calculatePath = (edge: EdgeData) => {
-  return `M ${edge.sourcePos.x}% ${edge.sourcePos.y}% L ${edge.targetPos.x}% ${edge.targetPos.y}%`;
+  return `M ${edge.sourcePos.x} ${edge.sourcePos.y} L ${edge.targetPos.x} ${edge.targetPos.y}`;
 };
 
 const getEdgeColor = (edge: EdgeData) => {

@@ -70,6 +70,5 @@ Then configure one hook per event type pointing to `send_event.ts`.
 | Variable | Required | Purpose |
 |----------|----------|---------|
 | `OPENROUTER_API_KEY` | For AI summaries | LLM-powered event summarization |
-| `OPENAI_API_KEY` | Optional | Alternative LLM + TTS provider |
-| `ELEVENLABS_API_KEY` | Optional | Voice TTS announcements |
+| `VOICEAI_API_KEY` | Optional | Voice TTS announcements |
 | `ENGINEER_NAME` | Optional | Personalized TTS messages |

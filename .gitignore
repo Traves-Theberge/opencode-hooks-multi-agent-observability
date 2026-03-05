@@ -243,31 +243,8 @@ results/
 .svn/
 CVS/
 opencode-output.json
-.opencode/commands/feature.md
-
-# Specs - ignore everything except specific plan files
-specs/*
-!specs/plan_new_feature_opencode-pro.md
-!specs/plan_new_feature_opencode-flash.md
-
-# App docs - ignore everything
-app_docs/
 
 .mcp.json
 
-# AI docs - ignore everything except specific answer files
-ai_docs/*
-!ai_docs/opencode-pro/
-!ai_docs/opencode-flash/
-ai_docs/opencode-pro/*
-ai_docs/opencode-flash/*
-!ai_docs/opencode-pro/answers.md
-!ai_docs/opencode-flash/answers.md
-
 # OpenCode session data
 .opencode/data/
-
-
-trees/
-
-deep_docs

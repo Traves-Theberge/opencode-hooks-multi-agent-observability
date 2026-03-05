@@ -55,8 +55,7 @@ cd /path/to/your/project/.opencode/hooks && bun install
 │   │       ├── components/     # EventTimeline, EventRow, FilterPanel, LivePulseChart
 │   │       ├── composables/    # useWebSocket, useEventColors, useChartData
 │   │       └── types.ts
-│   │
-│   └── demo-opencode-agent/    # Example agent with hooks pre-configured
+│
 │
 ├── .opencode/
 │   ├── hooks/                  # 12 TypeScript hook scripts + utilities
@@ -92,8 +91,7 @@ cd /path/to/your/project/.opencode/hooks && bun install
 | Variable | Required | Purpose |
 |----------|----------|---------|
 | `OPENROUTER_API_KEY` | For AI summaries | LLM-powered event summarization |
-| `OPENAI_API_KEY` | Optional | Alternative LLM + TTS |
-| `ELEVENLABS_API_KEY` | Optional | Voice announcements |
+| `VOICEAI_API_KEY` | Optional | Voice announcements |
 | `ENGINEER_NAME` | Optional | Personalized messages |
 
 ### Ports

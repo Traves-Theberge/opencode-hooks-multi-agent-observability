@@ -50,9 +50,7 @@ bun run .opencode/hooks/send_event.ts --source-app YOUR_APP --event-type PreTool
 | `utils/summarizer.ts` | AI-powered event summarization via LLM |
 | `utils/hitl.ts` | Human-in-the-Loop WebSocket client |
 | `utils/llm/openrouter.ts` | OpenRouter LLM integration |
-| `utils/llm/oai.ts` | OpenAI LLM integration |
-| `utils/tts/elevenlabs_tts.ts` | ElevenLabs text-to-speech |
-| `utils/tts/openai_tts.ts` | OpenAI text-to-speech |
+| `utils/tts/voiceai_tts.ts` | Voice.ai text-to-speech |
 | `utils/tts/system_tts.ts` | System native TTS fallback |
 
 ## Event Visualization
