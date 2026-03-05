@@ -3,28 +3,36 @@
 All notable changes to this project are documented here.  
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
-## [Unreleased]
+## [1.1.0] - 2026-03-04
+
+### Added
+- **Native OpenCode plugin** (`.opencode/plugins/observability.ts`) — replaces the old `settings.json` hook configuration with a proper OpenCode v1.2+ plugin that auto-loads at startup
+- Plugin captures all session lifecycle events (`session.created`, `session.idle`, `session.error`), tool execution hooks (`tool.execute.before`, `tool.execute.after`), and message/file events
+- Missing `utils/constants.ts` module for hook scripts
 
 ### Changed
-- Consolidated documentation into `docs/` directory
-- Rewrote `README.md` for clarity and brevity
-- Fixed `justfile` hooks recipes to use Bun/TypeScript
-- Migrated TTS from ElevenLabs/OpenAI to Voice.ai (`voiceai-tts-v1-latest`)
-- Replaced `ELEVENLABS_API_KEY` and `OPENAI_API_KEY` with `VOICEAI_API_KEY`
+- Migrated from `settings.json` hook definitions to native OpenCode plugin API
+- Updated all agent config files to use valid `#RRGGBB` hex color format
+- Scoped `.opencode/hooks/tsconfig.json` with `include`/`exclude` and `bun-types`
+- Updated README.md, integration guide, and hooks reference for new architecture
+- Bumped server version to `1.1.0`
 
 ### Removed
 - Removed `apps/demo-opencode-agent/` (stale duplicate of hooks)
-- Removed OpenAI LLM fallback (`oai.ts`) — OpenRouter is sole LLM provider
 - Removed duplicate agents (`scout-report-suggest-fast`, `fetch-docs-opencode-flash`)
-- Removed `create-worktree-skill/` (duplicated by `worktree-manager-skill/`)
-- Removed 8 unused output styles (kept `tts-summary`, `observable-tools-diffs`, `ultra-concise`)
-- Removed stale `prime.md` command, `logs/` test dirs, `system.log`
-- Removed `ai_docs/` directory (stale external links)
+- Removed unused hook scripts that were replaced by the native plugin (`send_event.ts`, `pre_tool_use.ts`, `post_tool_use.ts`, `session_start.ts`, `session_end.ts`, etc.)
+- Removed OpenAI npm dependency — OpenRouter is sole LLM provider
+
+### Fixed
+- Fixed agent config `color` fields using named colors instead of required hex format
+- Fixed agent config `tools` fields using strings instead of required record format
+- Fixed `.opencode/hooks/tsconfig.json` scanning entire project tree (missing `include`/`exclude`)
+- Fixed SVG path `d` attribute errors in TopologyView (percentage signs in coordinates)
 
 ## [1.0.0] - 2026-03-01
 
 ### Added
-- TypeScript hook system with 12 event-specific scripts
+- TypeScript hook system with event-specific scripts
 - Bun-powered SQLite server with WebSocket streaming
 - Vue 3 real-time dashboard with filtering and live charts
 - Human-in-the-Loop (HITL) WebSocket integration

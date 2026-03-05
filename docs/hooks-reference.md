@@ -1,71 +1,72 @@
-# Hooks Reference
+# Hooks & Plugin Reference
 
-Complete reference for all 12 OpenCode hook scripts in `.opencode/hooks/`.
+Reference for the OpenCode observability plugin and remaining hook scripts.
 
-## Core Script
+## Native Plugin — `observability.ts`
 
-### `send_event.ts`
-Universal event sender that forwards hook data to the observability server.
+Located at `.opencode/plugins/observability.ts`, this plugin auto-loads when OpenCode starts in the project directory. It uses `fetch()` to POST events directly to the backend server.
 
-```bash
-bun run .opencode/hooks/send_event.ts --source-app YOUR_APP --event-type PreToolUse --summarize
+### Plugin Events Captured
+
+| OpenCode Event | Mapped Event Type | When It Fires |
+|---------------|-------------------|--------------|
+| `session.created` | `SessionStart` | New session begins |
+| `session.idle` | `SessionIdle` | Agent finishes work |
+| `session.error` | `SessionError` | Session errors out |
+| `session.updated` | `SessionUpdated` | Session metadata changes |
+| `tool.execute.before` | `PreToolUse` | Before any tool runs |
+| `tool.execute.after` | `PostToolUse` | After any tool completes |
+| `message.updated` | `MessageUpdated` | LLM message changes |
+| `message.part.updated` | `MessagePartUpdated` | Streaming message chunks |
+| `file.edited` | `FileEdited` | File modifications |
+| *(init)* | `PluginLoaded` | Plugin initializes |
+| *(any other)* | *(forwarded as-is)* | All other OpenCode events |
+
+### Tool Hook Payload
+
+```typescript
+// tool.execute.before receives:
+{
+  tool_name: "bash",          // Tool being called
+  tool_input: { ... },        // Arguments passed to tool
+  directory: "/project/path"
+}
+
+// tool.execute.after receives:
+{
+  tool_name: "bash",
+  tool_input: { ... },
+  tool_response: { success: true },
+  directory: "/project/path"
+}
 ```
 
-**Flags:**
-- `--source-app` — Unique identifier for your project
-- `--event-type` — Hook event type (see table below)
-- `--summarize` — Generate an AI summary of the event payload
-- `--add-chat` — Include conversation transcript (used with Stop events)
+## Standalone Hook Scripts
 
-## Event-Specific Hooks
-
-| Script | Event | Purpose |
-|--------|-------|---------|
-| `pre_tool_use.ts` | PreToolUse | Blocks dangerous commands (`rm -rf`), validates tool usage, summarizes inputs |
-| `post_tool_use.ts` | PostToolUse | Captures execution results, detects MCP tools (`mcp_server`, `mcp_tool_name`) |
-| `post_tool_use_failure.ts` | PostToolUseFailure | Logs tool execution failures |
-| `permission_request.ts` | PermissionRequest | Logs permission request events |
-| `notification.ts` | Notification | Tracks user interactions, type-aware TTS (permission_prompt, idle_prompt) |
-| `user_prompt_submit.ts` | UserPromptSubmit | Logs user prompts, supports JSON `{"decision": "block"}` validation |
-| `stop.ts` | Stop | Records session completion with `stop_hook_active` guard |
-| `subagent_stop.ts` | SubagentStop | Monitors subagent completion with transcript path |
-| `subagent_start.ts` | SubagentStart | Tracks subagent lifecycle start events |
-| `pre_compact.ts` | PreCompact | Tracks context compaction with custom instructions |
-| `session_start.ts` | SessionStart | Logs session start with `agent_type`, `model`, `source` |
-| `session_end.ts` | SessionEnd | Logs session end with reason tracking |
-
-## Validators
+These scripts run independently via `bun run` for specific tasks:
 
 | Script | Purpose |
 |--------|---------|
-| `validators/validate_new_file.ts` | Validates file creation in Stop hooks |
-| `validators/validate_file_contains.ts` | Validates file content sections |
+| `stop.ts` | Session completion logging + TTS announcements |
+| `notification.ts` | User notification handling + TTS alerts |
+| `subagent_stop.ts` | Subagent lifecycle tracking |
 
 ## Utility Libraries
 
 | Module | Purpose |
 |--------|---------|
-| `utils/constants.ts` | Shared constants, log directory management |
-| `utils/model_extractor.ts` | Extracts model name from transcripts with 60s cache |
-| `utils/summarizer.ts` | AI-powered event summarization via LLM |
-| `utils/hitl.ts` | Human-in-the-Loop WebSocket client |
-| `utils/llm/openrouter.ts` | OpenRouter LLM integration |
-| `utils/tts/voiceai_tts.ts` | Voice.ai text-to-speech |
-| `utils/tts/system_tts.ts` | System native TTS fallback |
+| `utils/constants.ts` | Shared constants, session log directory management |
+| `utils/tts/voiceai_tts.ts` | Voice.ai text-to-speech integration |
 
 ## Event Visualization
 
-| Event Type | Emoji | Color Coding |
-|-----------|-------|-------------|
-| PreToolUse | 🔧 | Session-based |
-| PostToolUse | ✅ | Session-based |
-| PostToolUseFailure | ❌ | Session-based |
-| PermissionRequest | 🔐 | Session-based |
-| Notification | 🔔 | Session-based |
-| Stop | 🛑 | Session-based |
-| SubagentStart | 🟢 | Session-based |
-| SubagentStop | 👥 | Session-based |
-| PreCompact | 📦 | Session-based |
-| UserPromptSubmit | 💬 | Session-based |
-| SessionStart | 🚀 | Session-based |
-| SessionEnd | 🏁 | Session-based |
+| Event Type | Display |
+|-----------|---------|
+| PreToolUse | Tool call intercepted |
+| PostToolUse | Tool execution completed |
+| SessionStart | Session began |
+| SessionIdle | Agent finished work |
+| SessionError | Session errored |
+| MessageUpdated | LLM response updated |
+| PluginLoaded | Plugin initialized |
+| FileEdited | File was modified |

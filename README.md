@@ -1,14 +1,16 @@
 # Multi-Agent Observability System
 
-Real-time monitoring and visualization for OpenCode agents through hook event tracking.
+Real-time monitoring and visualization for OpenCode agents through a native plugin and event tracking.
 
 <img src="images/app.png" alt="Multi-Agent Observability Dashboard" style="max-width: 800px; width: 100%;">
 
 ## Architecture
 
 ```
-OpenCode Agents → Hook Scripts (TypeScript) → HTTP POST → Bun Server → SQLite → WebSocket → Vue Dashboard
+OpenCode Session → Plugin (observability.ts) → HTTP POST → Bun Server → SQLite → WebSocket → Vue Dashboard
 ```
+
+The system uses a **native OpenCode plugin** (`.opencode/plugins/observability.ts`) that auto-loads when OpenCode starts in this project directory. The plugin intercepts session lifecycle events, tool executions, and message updates, then forwards them as JSON to the backend server.
 
 ## Quick Start
 
@@ -28,16 +30,27 @@ cp .env.sample .env
 # 4. Open the dashboard
 open http://localhost:5173
 
-# 5. Use OpenCode in any project — events stream to the dashboard in real-time
+# 5. Use OpenCode in this project — events stream to the dashboard automatically
 ```
 
-## Add Observability to Your Project
+## How It Works
 
-Copy the `.opencode` directory to any project and update the `source-app` name in `settings.json`. See the full [Integration Guide](docs/integration-guide.md).
+When OpenCode starts in this project directory, it auto-loads `.opencode/plugins/observability.ts`. The plugin:
+
+1. Sends a `PluginLoaded` event on initialization
+2. Captures `session.created`, `session.idle`, `session.error` lifecycle events
+3. Intercepts `tool.execute.before` → `PreToolUse` and `tool.execute.after` → `PostToolUse`
+4. Forwards `message.updated`, `file.edited`, and all other events to the dashboard
+
+No `settings.json` configuration is needed — plugins in `.opencode/plugins/` auto-load.
+
+## Add Observability to Another Project
+
+Copy the plugin file and point it at the running server. See the full [Integration Guide](docs/integration-guide.md).
 
 ```bash
-cp -R .opencode /path/to/your/project/
-cd /path/to/your/project/.opencode/hooks && bun install
+mkdir -p /path/to/your/project/.opencode/plugins
+cp .opencode/plugins/observability.ts /path/to/your/project/.opencode/plugins/
 ```
 
 ## Project Structure
@@ -50,28 +63,25 @@ cd /path/to/your/project/.opencode/hooks && bun install
 │   │       ├── db.ts           # SQLite with WAL mode
 │   │       └── types.ts        # Shared interfaces
 │   │
-│   ├── client/                 # Vue 3 dashboard (port 5173)
-│   │   └── src/
-│   │       ├── components/     # EventTimeline, EventRow, FilterPanel, LivePulseChart
-│   │       ├── composables/    # useWebSocket, useEventColors, useChartData
-│   │       └── types.ts
-│
+│   └── client/                 # Vue 3 dashboard (port 5173)
+│       └── src/
+│           ├── components/     # EventTimeline, TopologyView, FilterPanel
+│           ├── composables/    # useWebSocket, useEventColors, useChartData
+│           └── types.ts
 │
 ├── .opencode/
-│   ├── hooks/                  # 12 TypeScript hook scripts + utilities
-│   │   ├── send_event.ts       # Universal event sender
-│   │   ├── pre_tool_use.ts     # Tool validation & blocking
+│   ├── plugins/
+│   │   └── observability.ts    # ← Native OpenCode plugin (auto-loaded)
+│   ├── hooks/                  # Standalone hook scripts + utilities
 │   │   ├── stop.ts             # Session completion + TTS
-│   │   ├── utils/              # LLM, TTS, model extraction, HITL
-│   │   └── validators/         # Stop hook file validators
-│   ├── agents/team/            # Multi-agent team definitions
-│   ├── commands/               # Custom slash commands
-│   ├── skills/                 # Reusable agent skills
-│   ├── output-styles/          # Response formatting templates
-│   └── settings.json           # Hook configuration (all 12 events)
+│   │   ├── notification.ts     # User notification + TTS
+│   │   ├── subagent_stop.ts    # Subagent lifecycle tracking
+│   │   └── utils/              # TTS, constants
+│   ├── agents/                 # Custom agent definitions
+│   └── agents/team/            # Multi-agent team definitions
 │
 ├── docs/                       # Documentation
-│   ├── hooks-reference.md      # Complete hook API reference
+│   ├── hooks-reference.md      # Plugin events + hook scripts reference
 │   ├── integration-guide.md    # Setup guide for other projects
 │   ├── hitl-guide.md           # Human-in-the-Loop guide
 │   └── model-extraction.md     # Model name caching guide
@@ -90,6 +100,7 @@ cd /path/to/your/project/.opencode/hooks && bun install
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
+| `OBSERVABILITY_SERVER_URL` | No (default: `http://localhost:4000`) | Backend server URL |
 | `OPENROUTER_API_KEY` | For AI summaries | LLM-powered event summarization |
 | `VOICEAI_API_KEY` | Optional | Voice announcements |
 | `ENGINEER_NAME` | Optional | Personalized messages |
@@ -107,12 +118,12 @@ cd /path/to/your/project/.opencode/hooks && bun install
 |-------|-----------|
 | Server | Bun, TypeScript, SQLite |
 | Client | Vue 3, TypeScript, Vite, Tailwind CSS |
-| Hooks | TypeScript, Bun |
+| Plugin | TypeScript (OpenCode native plugin API) |
 | Communication | HTTP REST, WebSocket |
 
 ## Documentation
 
-- [Hooks Reference](docs/hooks-reference.md) — All 12 hook scripts and utilities
+- [Hooks Reference](docs/hooks-reference.md) — Plugin events and hook scripts
 - [Integration Guide](docs/integration-guide.md) — Add observability to any project
 - [HITL Guide](docs/hitl-guide.md) — Human-in-the-Loop architecture
 - [Model Extraction](docs/model-extraction.md) — Cached model name extraction
@@ -120,9 +131,8 @@ cd /path/to/your/project/.opencode/hooks && bun install
 ## Testing
 
 ```bash
-just test-event    # Send a test event
+just test-event    # Send a test event via curl
 just health        # Check server/client status
-just hook-test pre_tool_use  # Test a hook directly
 ```
 
 ## License
