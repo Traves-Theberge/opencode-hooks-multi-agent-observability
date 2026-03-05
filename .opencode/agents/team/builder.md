@@ -1,7 +1,7 @@
 ---
 name: builder
 description: Generic engineering agent that executes ONE task at a time. Use when work needs to be done - writing code, creating files, implementing features.
-model: opus
+model: openai/gpt-5.3-codex
 color: cyan
 hooks:
   PostToolUse:

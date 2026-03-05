@@ -1,8 +1,15 @@
 ---
 name: create-worktree-subagent
 description: Use when the user explicitly asks for a SUBAGENT to create a worktree. If the user does not mention "subagent" or explicitly request subagent delegation, do NOT trigger this. Only use when user says things like "use a subagent to create a worktree" or "delegate worktree creation to a subagent". Creates isolated git worktrees with parallel-running configuration.
-tools: SlashCommand, Bash, Read, Write, Edit, Glob, Grep
-model: sonnet
+tools:
+  SlashCommand: true
+  Bash: true
+  Read: true
+  Write: true
+  Edit: true
+  Glob: true
+  Grep: true
+model: openai/gpt-5.3-codex
 color: green
 ---
 

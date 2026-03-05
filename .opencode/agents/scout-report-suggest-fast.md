@@ -1,8 +1,11 @@
 ---
 name: scout-report-suggest-fast
 description: Use proactively to quickly scout codebase issues, identify problem locations, and suggest resolutions. Specialist for read-only analysis and reporting without making changes.
-tools: Read, Glob, Grep
-model: haiku
+tools:
+  Read: true
+  Glob: true
+  Grep: true
+model: openai/gpt-5.3-codex
 color: blue
 ---
 

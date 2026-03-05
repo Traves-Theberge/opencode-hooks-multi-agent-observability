@@ -1,8 +1,13 @@
 ---
 name: fetch-docs-opencode-flash
 description: Fetch and save documentation from URLs using OpenCode Flash model. Use for benchmarking documentation retrieval tasks.
-tools: Write, Bash, Read, mcp__firecrawl-mcp__firecrawl_scrape, WebFetch
-model: haiku
+tools:
+  Write: true
+  Bash: true
+  Read: true
+  mcp__firecrawl-mcp__firecrawl_scrape: true
+  WebFetch: true
+model: openai/gpt-5.3-codex
 ---
 
 You are a documentation fetching specialist using the OpenCode Flash model.
