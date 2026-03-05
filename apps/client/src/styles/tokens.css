@@ -1,0 +1,262 @@
+/**
+ * HLLM Design Tokens
+ * 
+ * Framework-agnostic CSS custom properties extracted from the HLLM design system.
+ * Import this file to get all design tokens as CSS variables.
+ *
+ * Usage:
+ *   import '@hllm/design-tokens/css';
+ *   — or —
+ *   @import '@hllm/design-tokens/css';
+ */
+
+/* ==========================================================================
+   Fonts
+   ========================================================================== */
+
+:root {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ==========================================================================
+   Radius
+   ========================================================================== */
+
+:root {
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+/* ==========================================================================
+   Spacing
+   ========================================================================== */
+
+:root {
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 0.75rem;
+  --spacing-lg: 1rem;
+  --spacing-xl: 1.5rem;
+  --spacing-2xl: 2rem;
+}
+
+/* ==========================================================================
+   Shadows
+   ========================================================================== */
+
+:root {
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   Colors — Light Mode (default)
+   ========================================================================== */
+
+:root {
+  /* Core */
+  --background: 0 0% 100%;
+  --foreground: 220 15% 15%;
+  --card: 220 10% 98%;
+  --card-foreground: 220 15% 15%;
+  --card-elevated: 220 10% 96%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 15% 15%;
+
+  /* Semantic */
+  --primary: 220 15% 15%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 10% 94%;
+  --secondary-foreground: 220 15% 15%;
+  --muted: 220 10% 92%;
+  --muted-foreground: 220 10% 45%;
+  --muted-foreground-dim: 220 10% 60%;
+  --accent: 220 10% 90%;
+  --accent-foreground: 220 15% 15%;
+  --destructive: 0 70% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 10% 88%;
+  --border-hover: 220 10% 78%;
+  --input: 220 10% 96%;
+  --input-focus: 220 10% 92%;
+  --ring: 142 50% 40%;
+
+  /* Accent green */
+  --accent-green: 142 60% 40%;
+  --accent-green-muted: 142 40% 90%;
+  --accent-green-dim: 142 30% 85%;
+
+  /* Status */
+  --status-success: 142 70% 40%;
+  --status-success-foreground: 0 0% 100%;
+  --status-active: 217 90% 55%;
+  --status-warning: 45 90% 50%;
+  --status-error: 0 70% 50%;
+
+  /* Trace card */
+  --trace-bg: 220 10% 98%;
+  --trace-border: 220 10% 90%;
+  --trace-header: 220 10% 96%;
+
+  /* Topology */
+  --color-direct: hsl(200 60% 45%);
+  --color-linear: hsl(220 70% 50%);
+  --color-fan-out: hsl(280 70% 55%);
+  --color-fan-in: hsl(280 70% 55%);
+  --color-adversarial: hsl(350 70% 50%);
+  --color-cyclic: hsl(45 90% 45%);
+  --color-mesh: hsl(180 60% 40%);
+  --color-hierarchical: hsl(140 60% 40%);
+  --color-tree: hsl(142 60% 40%);
+  --color-agentic: hsl(280 60% 50%);
+
+  /* Overlays */
+  --overlay-subtle: 220 10% 0% / 0.04;
+  --overlay-light: 220 10% 0% / 0.06;
+  --overlay-medium: 220 10% 0% / 0.08;
+  --overlay-strong: 220 10% 0% / 0.12;
+  --overlay-heavy: 220 10% 0% / 0.16;
+}
+
+/* ==========================================================================
+   Colors — Dark Mode
+   ========================================================================== */
+
+.dark {
+  /* Core */
+  --background: 220 10% 10%;
+  --foreground: 210 15% 95%;
+  --card: 220 10% 12%;
+  --card-foreground: 210 15% 95%;
+  --card-elevated: 220 10% 14%;
+  --popover: 220 10% 14%;
+  --popover-foreground: 210 15% 95%;
+
+  /* Semantic */
+  --primary: 210 15% 98%;
+  --primary-foreground: 220 10% 10%;
+  --secondary: 220 10% 16%;
+  --secondary-foreground: 210 15% 98%;
+  --muted: 220 10% 18%;
+  --muted-foreground: 220 10% 55%;
+  --muted-foreground-dim: 220 10% 40%;
+  --accent: 220 10% 20%;
+  --accent-foreground: 210 15% 98%;
+  --destructive: 0 70% 50%;
+  --destructive-foreground: 210 15% 98%;
+  --border: 220 10% 20%;
+  --border-hover: 220 10% 28%;
+  --input: 220 10% 14%;
+  --input-focus: 220 10% 18%;
+  --ring: 142 50% 45%;
+
+  /* Accent green */
+  --accent-green: 142 60% 45%;
+  --accent-green-muted: 142 40% 20%;
+  --accent-green-dim: 142 30% 15%;
+
+  /* Status */
+  --status-success: 142 70% 45%;
+  --status-success-foreground: 0 0% 100%;
+  --status-active: 217 90% 60%;
+  --status-warning: 45 90% 55%;
+  --status-error: 0 70% 55%;
+
+  /* Trace card */
+  --trace-bg: 220 10% 11%;
+  --trace-border: 220 10% 18%;
+  --trace-header: 220 10% 14%;
+
+  /* Topology */
+  --color-direct: hsl(200 60% 55%);
+  --color-linear: hsl(220 70% 60%);
+  --color-fan-out: hsl(280 70% 65%);
+  --color-fan-in: hsl(280 70% 65%);
+  --color-adversarial: hsl(350 70% 60%);
+  --color-cyclic: hsl(45 90% 55%);
+  --color-mesh: hsl(180 60% 50%);
+  --color-hierarchical: hsl(140 60% 50%);
+  --color-tree: hsl(142 60% 50%);
+  --color-agentic: hsl(280 60% 60%);
+
+  /* Overlays */
+  --overlay-subtle: 210 15% 100% / 0.04;
+  --overlay-light: 210 15% 100% / 0.06;
+  --overlay-medium: 210 15% 100% / 0.08;
+  --overlay-strong: 210 15% 100% / 0.12;
+  --overlay-heavy: 210 15% 100% / 0.16;
+}
+
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   Scrollbar
+   ========================================================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px var(--color-primary); }
+  50% { box-shadow: 0 0 40px var(--color-primary); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}

@@ -1,10 +1,10 @@
 import { ref, computed, onMounted, readonly } from 'vue';
 import { API_BASE_URL } from '../config';
-import type { 
-  ThemeName, 
-  CustomTheme, 
-  PredefinedTheme, 
-  ThemeState, 
+import type {
+  ThemeName,
+  CustomTheme,
+  PredefinedTheme,
+  ThemeState,
   ThemeManagerState,
   CreateThemeFormData,
   ThemeColors,
@@ -444,7 +444,7 @@ export function useThemes() {
   // Core theme management
   const setTheme = (theme: ThemeName | string) => {
     const isCustom = !PREDEFINED_THEME_NAMES.includes(theme as ThemeName);
-    
+
     if (isCustom) {
       const customTheme = state.value.customThemes.find(t => t.id === theme);
       if (!customTheme) {
@@ -458,7 +458,7 @@ export function useThemes() {
 
     state.value.currentTheme = theme;
     state.value.isCustomTheme = isCustom;
-    
+
     // Save to localStorage
     localStorage.setItem('theme', theme);
     localStorage.setItem('isCustomTheme', isCustom.toString());
@@ -468,33 +468,29 @@ export function useThemes() {
     // Remove all theme classes (including those with hyphens)
     document.documentElement.className = document.documentElement.className
       .replace(/theme-[\w-]+/g, '');
-    
+
     // Add new theme class
     const themeData = PREDEFINED_THEMES[themeName];
     if (themeData) {
       document.documentElement.classList.add(themeData.cssClass);
-      
-      // For backward compatibility with existing dark mode
-      if (themeName === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
     }
+
+    // Always keep dark class for the HLLM design token system
+    document.documentElement.classList.add('dark');
   };
 
   const applyCustomTheme = (theme: CustomTheme) => {
     // Remove all theme classes (including those with hyphens)
     document.documentElement.className = document.documentElement.className
       .replace(/theme-[\w-]+/g, '');
-    
+
     // Apply custom CSS variables
     const root = document.documentElement;
     Object.entries(theme.colors).forEach(([key, value]) => {
       const cssVar = camelToKebab(key);
       root.style.setProperty(`--theme-${cssVar}`, value);
     });
-    
+
     // Add custom theme class
     root.classList.add('theme-custom');
   };
@@ -584,7 +580,7 @@ export function useThemes() {
     if (index !== -1) {
       state.value.customThemes.splice(index, 1);
       saveCustomThemes();
-      
+
       // Switch to default theme if current theme was deleted
       if (state.value.currentTheme === themeId) {
         setTheme('light');
@@ -608,7 +604,7 @@ export function useThemes() {
   const importTheme = (importData: ThemeImportExport): boolean => {
     try {
       const theme = importData.theme;
-      
+
       // Validate theme structure
       const validation = validateTheme(theme.colors);
       if (!validation.isValid) {
@@ -651,7 +647,7 @@ export function useThemes() {
     try {
       const response = await fetch(`${API_BASE_URL}/api/themes?isPublic=true`);
       if (!response.ok) return [];
-      
+
       const result: ThemeApiResponse<CustomTheme[]> = await response.json();
       if (result.success && result.data) {
         // Convert server themes to custom theme format
@@ -707,10 +703,10 @@ export function useThemes() {
   // Initialization
   const initializeTheme = () => {
     loadCustomThemes();
-    
+
     // Load saved theme
     const savedTheme = localStorage.getItem('theme');
-    
+
     if (savedTheme) {
       setTheme(savedTheme);
     } else {
@@ -739,7 +735,7 @@ export function useThemes() {
 
   const previewTheme = (theme: ThemeName | CustomTheme) => {
     managerState.value.previewTheme = theme;
-    
+
     // Apply preview temporarily
     if (typeof theme === 'string') {
       applyPredefinedTheme(theme);
@@ -750,7 +746,7 @@ export function useThemes() {
 
   const cancelPreview = () => {
     managerState.value.previewTheme = null;
-    
+
     // Restore current theme
     if (state.value.isCustomTheme) {
       const customTheme = state.value.customThemes.find(t => t.id === state.value.currentTheme);
@@ -764,10 +760,10 @@ export function useThemes() {
 
   const applyPreview = () => {
     if (managerState.value.previewTheme) {
-      const theme = typeof managerState.value.previewTheme === 'string' 
-        ? managerState.value.previewTheme 
+      const theme = typeof managerState.value.previewTheme === 'string'
+        ? managerState.value.previewTheme
         : managerState.value.previewTheme.id;
-      
+
       setTheme(theme);
       managerState.value.previewTheme = null;
     }
@@ -782,24 +778,24 @@ export function useThemes() {
     // State
     state: readonly(state),
     managerState,
-    
+
     // Computed
     currentThemeData,
     predefinedThemes,
-    
+
     // Core functions
     setTheme,
     validateTheme,
-    
+
     // Custom theme management
     createCustomTheme,
     updateCustomTheme,
     deleteCustomTheme,
-    
+
     // Import/Export
     exportTheme,
     importTheme,
-    
+
     // Manager functions
     openThemeManager,
     closeThemeManager,
@@ -807,10 +803,10 @@ export function useThemes() {
     previewTheme,
     cancelPreview,
     applyPreview,
-    
+
     // Server functions
     loadThemesFromServer,
-    
+
     // Utility
     initializeTheme
   };

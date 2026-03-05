@@ -1,43 +1,43 @@
 <template>
-  <div class="bg-gradient-to-r from-[var(--theme-bg-primary)] to-[var(--theme-bg-secondary)] px-3 py-4 mobile:py-2 shadow-lg">
+  <div class="bg-card/60 backdrop-blur-md px-4 py-4 mobile:py-2 shadow-sm border-b border-border">
     <div class="flex items-center justify-between mb-3 mobile:mb-2">
       <div class="flex items-center gap-3 mobile:gap-2">
-        <h3 class="text-base mobile:text-xs font-bold text-[var(--theme-primary)] drop-shadow-sm flex items-center">
-          <span class="mr-1.5 mobile:mr-1 text-xl mobile:text-sm">📊</span>
+        <h3 class="text-base mobile:text-xs font-semibold text-foreground flex items-center">
+          <BarChart3 class="w-5 h-5 mobile:w-4 mobile:h-4 text-primary mr-1.5 mobile:mr-1" />
           <span class="mobile:hidden">Live Activity Pulse</span>
         </h3>
         <div class="flex items-center gap-1.5 flex-wrap">
           <div
-            class="flex items-center gap-1.5 px-2 py-1 bg-gradient-to-r from-[var(--theme-primary)]/10 to-[var(--theme-primary-light)]/10 rounded-lg border border-[var(--theme-primary)]/30 shadow-sm"
+            class="flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-lg border border-primary/20 shadow-sm"
             :title="`${uniqueAgentCount} active agent${uniqueAgentCount !== 1 ? 's' : ''}`"
           >
-            <span class="text-lg mobile:text-base">👥</span>
-            <span class="text-sm mobile:text-xs font-bold text-[var(--theme-primary)]">{{ uniqueAgentCount }}</span>
-            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">agents</span>
+            <Users class="w-5 h-5 mobile:w-4 mobile:h-4 text-primary" />
+            <span class="text-sm mobile:text-xs font-bold text-primary">{{ uniqueAgentCount }}</span>
+            <span class="text-xs mobile:text-[10px] text-muted-foreground font-medium mobile:hidden">agents</span>
           </div>
           <div
-            class="flex items-center gap-1.5 px-2 py-1 bg-[var(--theme-bg-tertiary)] rounded-lg border border-[var(--theme-border-primary)] shadow-sm"
+            class="flex items-center gap-1.5 px-2 py-1 bg-secondary rounded-lg border border-border shadow-sm"
             :title="`Total events in the last ${timeRange === '1m' ? '1 minute' : timeRange === '3m' ? '3 minutes' : timeRange === '5m' ? '5 minutes' : '10 minutes'}`"
           >
-            <span class="text-lg mobile:text-base">⚡</span>
-            <span class="text-sm mobile:text-xs font-bold text-[var(--theme-text-primary)]">{{ totalEventCount }}</span>
-            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">events</span>
+            <Zap class="w-5 h-5 mobile:w-4 mobile:h-4 text-accent-amber" />
+            <span class="text-sm mobile:text-xs font-bold text-foreground">{{ totalEventCount }}</span>
+            <span class="text-xs mobile:text-[10px] text-muted-foreground font-medium mobile:hidden">events</span>
           </div>
           <div
-            class="flex items-center gap-1.5 px-2 py-1 bg-[var(--theme-bg-tertiary)] rounded-lg border border-[var(--theme-border-primary)] shadow-sm"
+            class="flex items-center gap-1.5 px-2 py-1 bg-secondary rounded-lg border border-border shadow-sm"
             :title="`Total tool calls in the last ${timeRange === '1m' ? '1 minute' : timeRange === '3m' ? '3 minutes' : timeRange === '5m' ? '5 minutes' : '10 minutes'}`"
           >
-            <span class="text-lg mobile:text-base">🔧</span>
-            <span class="text-sm mobile:text-xs font-bold text-[var(--theme-text-primary)]">{{ toolCallCount }}</span>
-            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">tools</span>
+            <WrenchIcon class="w-5 h-5 mobile:w-4 mobile:h-4 text-muted-foreground" />
+            <span class="text-sm mobile:text-xs font-bold text-foreground">{{ toolCallCount }}</span>
+            <span class="text-xs mobile:text-[10px] text-muted-foreground font-medium mobile:hidden">tools</span>
           </div>
           <div
-            class="flex items-center gap-1.5 px-2 py-1 bg-[var(--theme-bg-tertiary)] rounded-lg border border-[var(--theme-border-primary)] shadow-sm"
-            :title="`Average time between events in the last ${timeRange === '1m' ? '1 minute' : timeRange === '3m' ? '3 minutes' : timeRange === '5m' ? '5 minutes' : '10 minutes'}`"
+            class="flex items-center gap-1.5 px-2 py-1 bg-secondary rounded-lg border border-border shadow-sm"
+            :title="`Average time between events`"
           >
-            <span class="text-lg mobile:text-base">🕐</span>
-            <span class="text-sm mobile:text-xs font-bold text-[var(--theme-text-primary)]">{{ formatGap(eventTimingMetrics.avgGap) }}</span>
-            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">avg gap</span>
+            <Clock class="w-5 h-5 mobile:w-4 mobile:h-4 text-muted-foreground" />
+            <span class="text-sm mobile:text-xs font-bold text-foreground">{{ formatGap(eventTimingMetrics.avgGap) }}</span>
+            <span class="text-xs mobile:text-[10px] text-muted-foreground font-medium mobile:hidden">avg gap</span>
           </div>
         </div>
       </div>
@@ -48,10 +48,10 @@
           @click="setTimeRange(range)"
           @keydown="handleTimeRangeKeyDown($event, index)"
           :class="[
-            'px-3 py-1.5 mobile:px-2 mobile:py-1 text-sm mobile:text-xs font-bold rounded-lg transition-all duration-200 min-w-[30px] mobile:min-w-[24px] min-h-[30px] mobile:min-h-[24px] flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105 border',
+            'px-3 py-1.5 mobile:px-2 mobile:py-1 text-sm mobile:text-xs font-semibold rounded-lg transition-all duration-200 min-w-[30px] mobile:min-w-[24px] min-h-[30px] mobile:min-h-[24px] flex items-center justify-center shadow-sm border',
             timeRange === range
-              ? 'bg-gradient-to-r from-[var(--theme-primary)] to-[var(--theme-primary-light)] text-white border-[var(--theme-primary-dark)] drop-shadow-md'
-              : 'bg-[var(--theme-bg-tertiary)] text-[var(--theme-text-primary)] border-[var(--theme-border-primary)] hover:bg-[var(--theme-bg-quaternary)] hover:border-[var(--theme-primary)]'
+              ? 'bg-primary text-primary-foreground border-primary shadow-md'
+              : 'bg-secondary text-foreground border-border hover:bg-accent hover:border-border-hover'
           ]"
           role="tab"
           :aria-selected="timeRange === range"
@@ -74,7 +74,7 @@
       ></canvas>
       <div
         v-if="tooltip.visible"
-        class="absolute bg-gradient-to-r from-[var(--theme-primary)] to-[var(--theme-primary-dark)] text-white px-2 py-1.5 mobile:px-3 mobile:py-2 rounded-lg text-xs mobile:text-sm pointer-events-none z-10 shadow-lg border border-[var(--theme-primary-light)] font-bold drop-shadow-md"
+        class="absolute bg-popover text-popover-foreground px-3 py-2 rounded-lg text-xs pointer-events-none z-10 shadow-lg border border-border font-medium backdrop-blur-md"
         :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }"
       >
         {{ tooltip.text }}
@@ -83,8 +83,8 @@
         v-if="!hasData"
         class="absolute inset-0 flex items-center justify-center"
       >
-        <p class="text-[var(--theme-text-tertiary)] mobile:text-sm text-base font-semibold">
-          <span class="mr-1.5 text-base">⏳</span>
+        <p class="text-muted-foreground mobile:text-sm text-base font-medium flex items-center">
+          <Loader2 class="w-4 h-4 animate-spin mr-1.5" />
           Waiting for events...
         </p>
       </div>
@@ -94,6 +94,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
+import { BarChart3, Users, Zap, Wrench as WrenchIcon, Clock, Loader2 } from 'lucide-vue-next';
 import type { HookEvent, TimeRange, ChartConfig } from '../types';
 import { useChartData } from '../composables/useChartData';
 import { createChartRenderer, type ChartDimensions } from '../utils/chartRenderer';
@@ -166,7 +167,7 @@ let resizeObserver: ResizeObserver | null = null;
 let animationFrame: number | null = null;
 const processedEventIds = new Set<string>();
 
-const { formatEventTypeLabel } = useEventEmojis();
+const { formatChartLabel } = useEventEmojis();
 const { getHexColorForSession } = useEventColors();
 
 const hasData = computed(() => dataPoints.value.some(dp => dp.count > 0));
@@ -187,10 +188,10 @@ const tooltip = ref({
   text: ''
 });
 
-const getThemeColor = (property: string): string => {
+const getTokenColor = (property: string): string => {
   const style = getComputedStyle(document.documentElement);
-  const color = style.getPropertyValue(`--theme-${property}`).trim();
-  return color || '#3B82F6'; // fallback
+  const channels = style.getPropertyValue(`--${property}`).trim();
+  return channels ? `hsl(${channels})` : '#3B82F6';
 };
 
 const getActiveConfig = (): ChartConfig => {
@@ -200,10 +201,10 @@ const getActiveConfig = (): ChartConfig => {
     barWidth: 3,
     barGap: 1,
     colors: {
-      primary: getThemeColor('primary'),
-      glow: getThemeColor('primary-light'),
-      axis: getThemeColor('border-primary'),
-      text: getThemeColor('text-tertiary')
+      primary: getTokenColor('accent-green'),
+      glow: getTokenColor('accent-green-muted'),
+      axis: getTokenColor('border'),
+      text: getTokenColor('muted-foreground')
     }
   };
 };
@@ -232,7 +233,7 @@ const render = () => {
   renderer.drawBackground();
   renderer.drawAxes();
   renderer.drawTimeLabels(timeRange.value);
-  renderer.drawBars(data, maxValue, 1, formatEventTypeLabel, getHexColorForSession);
+  renderer.drawBars(data, maxValue, 1, formatChartLabel, getHexColorForSession);
 };
 
 const animateNewEvent = (x: number, y: number) => {

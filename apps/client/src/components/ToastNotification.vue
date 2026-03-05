@@ -2,7 +2,7 @@
   <Transition name="toast">
     <div
       v-if="isVisible"
-      class="fixed left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[var(--theme-primary)] to-[var(--theme-primary-light)] text-white rounded-lg border-2 font-semibold drop-shadow-2xl transition-all duration-300"
+      class="fixed left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 bg-popover text-popover-foreground backdrop-blur-md rounded-lg border-2 font-semibold shadow-lg transition-all duration-300"
       :style="{
         top: `${16 + (index * 68)}px`,
         borderColor: agentColor,

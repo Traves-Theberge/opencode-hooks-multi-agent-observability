@@ -83,7 +83,7 @@
                   <div v-else-if="content.type === 'tool_use'" 
                        class="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded border border-yellow-200 dark:border-yellow-800">
                     <div class="flex items-center space-x-2 mb-2">
-                      <span class="text-2xl">🔧</span>
+                      <WrenchIcon class="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                       <span class="font-semibold text-yellow-800 dark:text-yellow-200">{{ content.name }}</span>
                     </div>
                     <pre class="text-sm text-gray-700 dark:text-gray-300 overflow-x-auto">{{ JSON.stringify(content.input, null, 2) }}</pre>
@@ -218,6 +218,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { Wrench as WrenchIcon } from 'lucide-vue-next';
 
 const props = defineProps<{
   chat: any[];
@@ -281,7 +282,7 @@ const cleanCommandContent = (content: string) => {
 const copyButtonStates = ref<Map<number, string>>(new Map());
 
 const getCopyButtonText = (index: number) => {
-  return copyButtonStates.value.get(index) || '📋';
+  return copyButtonStates.value.get(index) || 'Copy';
 };
 
 const copyMessage = async (index: number, _type: string) => {
@@ -292,14 +293,14 @@ const copyMessage = async (index: number, _type: string) => {
     const jsonPayload = JSON.stringify(item, null, 2);
     await navigator.clipboard.writeText(jsonPayload);
     
-    copyButtonStates.value.set(index, '✅');
+    copyButtonStates.value.set(index, 'Copied!');
     setTimeout(() => {
       copyButtonStates.value.delete(index);
       copyButtonStates.value = new Map(copyButtonStates.value);
     }, 2000);
   } catch (err) {
     console.error('Failed to copy:', err);
-    copyButtonStates.value.set(index, '❌');
+    copyButtonStates.value.set(index, 'Failed');
     setTimeout(() => {
       copyButtonStates.value.delete(index);
       copyButtonStates.value = new Map(copyButtonStates.value);

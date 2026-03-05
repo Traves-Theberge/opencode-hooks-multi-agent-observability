@@ -27,7 +27,7 @@
           class="model-badge"
           :title="`Model: ${modelName}`"
         >
-          <span class="text-base">🧠</span>
+          <Brain class="w-4 h-4 text-purple-400" />
           <span class="text-xs font-bold">{{ formatModelName(modelName) }}</span>
         </div>
         <div
@@ -36,7 +36,7 @@
           @mouseleave="hoveredEventCount = false"
           :title="`Total events in the last ${timeRange === '1m' ? '1 minute' : timeRange === '3m' ? '3 minutes' : '5 minutes'}`"
         >
-          <span class="text-base w-4 flex-shrink-0">⚡</span>
+          <Zap class="w-4 h-4 flex-shrink-0 text-accent-amber" />
           <span class="text-xs font-bold" :class="hoveredEventCount ? 'min-w-[65px]' : ''">
             {{ hoveredEventCount ? `${totalEventCount} Events` : totalEventCount }}
           </span>
@@ -47,25 +47,25 @@
           @mouseleave="hoveredToolCount = false"
           :title="`Tool calls in the last ${timeRange === '1m' ? '1 minute' : timeRange === '3m' ? '3 minutes' : '5 minutes'}`"
         >
-          <span class="text-base w-4 flex-shrink-0">🔧</span>
+          <WrenchIcon class="w-4 h-4 flex-shrink-0 text-muted-foreground" />
           <span class="text-xs font-bold" :class="hoveredToolCount ? 'min-w-[75px]' : ''">
             {{ hoveredToolCount ? `${toolCallCount} Tool Calls` : toolCallCount }}
           </span>
         </div>
         <div
-          class="avg-time-badge flex items-center gap-1.5 px-2 py-2 bg-[var(--theme-bg-tertiary)] rounded-lg border border-[var(--theme-border-primary)] shadow-sm min-h-[28px]"
+          class="avg-time-badge flex items-center gap-1.5 px-2 py-2 bg-secondary rounded-lg border border-border shadow-sm min-h-[28px]"
           @mouseover="hoveredAvgTime = true"
           @mouseleave="hoveredAvgTime = false"
-          :title="`Average time between events in the last ${timeRange === '1m' ? '1 minute' : timeRange === '3m' ? '3 minutes' : '5 minutes'}`"
+          :title="`Average time between events`"
         >
-          <span class="text-lg w-5 flex-shrink-0">🕐</span>
-          <span class="text-sm font-bold text-[var(--theme-text-primary)]" :class="hoveredAvgTime ? 'min-w-[90px]' : ''">
+          <Clock class="w-4 h-4 flex-shrink-0 text-muted-foreground" />
+          <span class="text-sm font-bold text-foreground" :class="hoveredAvgTime ? 'min-w-[90px]' : ''">
             {{ hoveredAvgTime ? `Avg Gap: ${formatGap(agentEventTimingMetrics.avgGap)}` : formatGap(agentEventTimingMetrics.avgGap) }}
           </span>
         </div>
       </div>
       <button @click="emit('close')" class="close-btn" title="Remove this swim lane">
-        ✕
+        <X class="w-4 h-4" />
       </button>
     </div>
     <div ref="chartContainer" class="chart-wrapper">
@@ -80,7 +80,7 @@
       ></canvas>
       <div
         v-if="tooltip.visible"
-        class="absolute bg-gradient-to-r from-[var(--theme-primary)] to-[var(--theme-primary-dark)] text-white px-2 py-1.5 rounded-lg text-xs pointer-events-none z-10 shadow-lg border border-[var(--theme-primary-light)] font-bold drop-shadow-md"
+        class="absolute bg-popover text-popover-foreground px-3 py-2 rounded-lg text-xs pointer-events-none z-10 shadow-lg border border-border font-medium backdrop-blur-md"
         :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }"
       >
         {{ tooltip.text }}
@@ -89,8 +89,8 @@
         v-if="!hasData"
         class="absolute inset-0 flex items-center justify-center"
       >
-        <p class="text-[var(--theme-text-tertiary)] text-sm font-semibold">
-          <span class="mr-1">⏳</span>
+        <p class="text-muted-foreground text-sm font-medium">
+          <Loader2 class="w-4 h-4 animate-spin mr-1" />
           Waiting for events...
         </p>
       </div>
@@ -100,6 +100,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
+import { Brain, Zap, Wrench as WrenchIcon, Clock, X, Loader2 } from 'lucide-vue-next';
 import type { HookEvent, TimeRange, ChartConfig } from '../types';
 import { useAgentChartData } from '../composables/useAgentChartData';
 import { createChartRenderer, type ChartDimensions } from '../utils/chartRenderer';
@@ -178,7 +179,7 @@ let resizeObserver: ResizeObserver | null = null;
 let animationFrame: number | null = null;
 const processedEventIds = new Set<string>();
 
-const { formatEventTypeLabel } = useEventEmojis();
+const { formatChartLabel } = useEventEmojis();
 const { getHexColorForApp, getHexColorForSession } = useEventColors();
 
 const hasData = computed(() => dataPoints.value.some(dp => dp.count > 0));
@@ -205,10 +206,10 @@ const tooltip = ref({
   text: ''
 });
 
-const getThemeColor = (property: string): string => {
+const getTokenColor = (property: string): string => {
   const style = getComputedStyle(document.documentElement);
-  const color = style.getPropertyValue(`--theme-${property}`).trim();
-  return color || '#3B82F6';
+  const channels = style.getPropertyValue(`--${property}`).trim();
+  return channels ? `hsl(${channels})` : '#3B82F6';
 };
 
 const getActiveConfig = (): ChartConfig => {
@@ -218,10 +219,10 @@ const getActiveConfig = (): ChartConfig => {
     barWidth: 3,
     barGap: 1,
     colors: {
-      primary: getThemeColor('primary'),
-      glow: getThemeColor('primary-light'),
-      axis: getThemeColor('border-primary'),
-      text: getThemeColor('text-tertiary')
+      primary: getTokenColor('accent-green'),
+      glow: getTokenColor('accent-green-muted'),
+      axis: getTokenColor('border'),
+      text: getTokenColor('muted-foreground')
     }
   };
 };
@@ -250,7 +251,7 @@ const render = () => {
   renderer.drawBackground();
   renderer.drawAxes();
   renderer.drawTimeLabels(props.timeRange);
-  renderer.drawBars(data, maxValue, 1, formatEventTypeLabel, getHexColorForSession);
+  renderer.drawBars(data, maxValue, 1, formatChartLabel, getHexColorForSession);
 };
 
 const animateNewEvent = (x: number, y: number) => {
@@ -511,10 +512,10 @@ onUnmounted(() => {
   align-items: center;
   gap: 6px;
   padding: 8px 8px;
-  background: var(--theme-bg-tertiary);
-  border: 1px solid var(--theme-border-primary);
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
-  color: var(--theme-text-primary);
+  color: hsl(var(--foreground));
   font-size: 11px;
   white-space: nowrap;
   cursor: pointer;
@@ -522,7 +523,6 @@ onUnmounted(() => {
   user-select: none;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   min-height: 28px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .model-badge {
@@ -532,13 +532,13 @@ onUnmounted(() => {
 .event-count-badge:hover,
 .tool-call-badge:hover,
 .model-badge:hover {
-  background: var(--theme-bg-quaternary);
-  border-color: var(--theme-primary);
+  background: hsl(var(--accent));
+  border-color: hsl(var(--border-hover));
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .avg-time-badge {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 }
 
 .close-btn {
@@ -546,7 +546,7 @@ onUnmounted(() => {
   border: none;
   cursor: pointer;
   font-size: 14px;
-  color: var(--theme-text-tertiary);
+  color: hsl(var(--muted-foreground));
   padding: 0;
   width: 20px;
   height: 20px;
@@ -559,17 +559,17 @@ onUnmounted(() => {
 }
 
 .close-btn:hover {
-  background: var(--theme-bg-quaternary);
-  color: var(--theme-text-primary);
+  background: hsl(var(--accent));
+  color: hsl(var(--foreground));
   transform: scale(1.1);
 }
 
 .chart-wrapper {
   position: relative;
   width: 100%;
-  border: 1px solid var(--theme-border-primary);
+  border: 1px solid hsl(var(--border));
   border-radius: 6px;
   overflow: hidden;
-  background: var(--theme-bg-tertiary);
+  background: hsl(var(--secondary));
 }
 </style>

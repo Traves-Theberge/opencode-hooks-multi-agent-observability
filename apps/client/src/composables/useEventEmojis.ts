@@ -1,111 +1,130 @@
-const eventTypeToEmoji: Record<string, string> = {
-  'PreToolUse': '🔧',
-  'PostToolUse': '✅',
-  'PostToolUseFailure': '❌',
-  'PermissionRequest': '🔐',
+// Maps hook event types and tool names to Lucide icon component names
+// Used with <DynIcon :name="iconName" /> for rendering
+
+const hookEventIcons: Record<string, string> = {
+  'PreToolUse': 'Wrench',
+  'PostToolUse': 'CheckCircle',
+  'PostToolUseFailure': 'XCircle',
+  'PermissionRequest': 'Lock',
+  'Notification': 'Bell',
+  'Stop': 'OctagonX',
+  'SubagentStart': 'Play',
+  'SubagentStop': 'Users',
+  'PreCompact': 'Package',
+  'UserPromptSubmit': 'MessageSquare',
+  'SessionStart': 'Rocket',
+  'SessionEnd': 'Flag',
+
+  'default': 'HelpCircle'
+};
+
+const toolEventIcons: Record<string, string> = {
+  'Bash': 'Terminal',
+  'Read': 'BookOpen',
+  'Write': 'PenTool',
+  'Edit': 'Pencil',
+  'MultiEdit': 'Pencil',
+  'Glob': 'Search',
+  'Grep': 'SearchCode',
+  'WebFetch': 'Globe',
+  'WebSearch': 'Search',
+  'NotebookEdit': 'NotebookPen',
+  'Task': 'Bot',
+  'TaskCreate': 'ClipboardList',
+  'TaskGet': 'FileText',
+  'TaskUpdate': 'FileEdit',
+  'TaskList': 'Files',
+  'TaskOutput': 'Upload',
+  'TaskStop': 'Square',
+  'TeamCreate': 'Users',
+  'TeamDelete': 'Trash2',
+  'SendMessage': 'MessageSquare',
+  'EnterPlanMode': 'Map',
+  'ExitPlanMode': 'DoorOpen',
+  'AskUserQuestion': 'HelpCircle',
+  'Skill': 'Zap',
+
+  'default': 'Wrench'
+};
+
+// Short text abbreviations for canvas rendering (canvas can't render Vue components)
+const hookEventShortLabels: Record<string, string> = {
+  'PreToolUse': '⚙',
+  'PostToolUse': '✓',
+  'PostToolUseFailure': '✗',
+  'PermissionRequest': '🔒',
   'Notification': '🔔',
-  'Stop': '🛑',
-  'SubagentStart': '🟢',
-  'SubagentStop': '👥',
+  'Stop': '⬤',
+  'SubagentStart': '▶',
+  'SubagentStop': '■',
   'PreCompact': '📦',
   'UserPromptSubmit': '💬',
   'SessionStart': '🚀',
   'SessionEnd': '🏁',
-  // Default
-  'default': '❓'
+  'default': '?'
 };
 
-const toolNameToEmoji: Record<string, string> = {
-  'Bash': '💻',
+const toolShortLabels: Record<string, string> = {
+  'Bash': '▸',
   'Read': '📖',
-  'Write': '✍️',
-  'Edit': '✏️',
-  'MultiEdit': '✏️',
+  'Write': '✎',
+  'Edit': '✏',
   'Glob': '🔍',
   'Grep': '🔎',
-  'WebFetch': '🌐',
-  'WebSearch': '🔍',
-  'NotebookEdit': '📓',
-  'Task': '🤖',
-  'TaskCreate': '📋',
-  'TaskGet': '📄',
-  'TaskUpdate': '📝',
-  'TaskList': '📑',
-  'TaskOutput': '📤',
-  'TaskStop': '⏹️',
-  'TeamCreate': '👥',
-  'TeamDelete': '🗑️',
-  'SendMessage': '💬',
-  'EnterPlanMode': '🗺️',
-  'ExitPlanMode': '🚪',
-  'AskUserQuestion': '❓',
-  'Skill': '⚡',
-  // Default
-  'default': '🔧'
+  'default': '⚙'
 };
 
 export function useEventEmojis() {
-  const getEmojiForEventType = (eventType: string): string => {
-    return eventTypeToEmoji[eventType] || eventTypeToEmoji.default;
+  const getHookEventIcon = (hookEventType: string): string => {
+    return hookEventIcons[hookEventType] || hookEventIcons['default'];
   };
 
-  const getEmojiForToolName = (toolName: string): string => {
-    // Check exact match first, then check for MCP tools (prefixed with mcp__)
-    if (toolNameToEmoji[toolName]) return toolNameToEmoji[toolName];
-    if (toolName.startsWith('mcp__')) return '🔌';
-    return toolNameToEmoji.default;
+  const getToolEventIcon = (toolName: string): string => {
+    if (toolName.startsWith('mcp__')) return 'Plug';
+    return toolEventIcons[toolName] || toolEventIcons['default'];
   };
-  
-  const formatEventTypeLabel = (eventTypes: Record<string, number>, toolEvents?: Record<string, number>): string => {
-    // Prefer toolEvents when available (shows combo emojis like 🔧💻)
-    if (toolEvents && Object.keys(toolEvents).length > 0) {
-      // Merge tool events with non-tool event types
-      const allEntries: Array<[string, number, string]> = []; // [key, count, emoji]
 
-      // Add tool event combos (e.g., "PreToolUse:Bash" → 🔧-💻)
-      for (const [key, count] of Object.entries(toolEvents)) {
-        const [eventType, toolName] = key.split(':');
-        const combo = `${getEmojiForEventType(eventType)}+${getEmojiForToolName(toolName)}`;
-        allEntries.push([key, count, combo]);
-      }
+  const formatEventTypeLabel = (hookEventType: string, toolName?: string): string => {
+    const hookIcon = getHookEventIcon(hookEventType);
 
-      // Add non-tool event types that aren't covered by toolEvents
-      const toolEventTypes = new Set(Object.keys(toolEvents).map(k => k.split(':')[0]));
-      for (const [type, count] of Object.entries(eventTypes)) {
-        if (!toolEventTypes.has(type)) {
-          allEntries.push([type, count, getEmojiForEventType(type)]);
-        }
-      }
-
-      // Sort by count descending, show top 3
-      allEntries.sort((a, b) => b[1] - a[1]);
-      const topEntries = allEntries.slice(0, 3);
-
-      return topEntries
-        .map(([, count, emoji]) => count > 1 ? `${emoji}×${count}` : emoji)
-        .join('');
+    if (toolName) {
+      const toolIcon = getToolEventIcon(toolName);
+      return `${hookIcon}+${toolIcon}`;
     }
 
-    // Fallback: event types only
-    const entries = Object.entries(eventTypes)
-      .sort((a, b) => b[1] - a[1]); // Sort by count descending
-
-    if (entries.length === 0) return '';
-
-    // Show up to 3 most frequent event types
-    const topEntries = entries.slice(0, 3);
-
-    return topEntries
-      .map(([type, count]) => {
-        const emoji = getEmojiForEventType(type);
-        return count > 1 ? `${emoji}×${count}` : emoji;
-      })
-      .join('');
+    return hookIcon;
   };
-  
+
+  // Chart-compatible label formatter — matches drawBars signature
+  // Uses short text symbols for canvas rendering
+  const formatChartLabel = (eventTypes: Record<string, number>, toolEvents?: Record<string, number>): string => {
+    const parts: string[] = [];
+
+    // Get dominant event type
+    const sortedEvents = Object.entries(eventTypes).sort((a, b) => b[1] - a[1]);
+    if (sortedEvents.length > 0) {
+      const [eventType] = sortedEvents[0];
+      parts.push(hookEventShortLabels[eventType] || hookEventShortLabels['default']);
+    }
+
+    // Get dominant tool
+    if (toolEvents) {
+      const sortedTools = Object.entries(toolEvents).sort((a, b) => b[1] - a[1]);
+      if (sortedTools.length > 0) {
+        const [toolName] = sortedTools[0];
+        parts.push(toolShortLabels[toolName] || toolShortLabels['default']);
+      }
+    }
+
+    return parts.join('+');
+  };
+
   return {
-    getEmojiForEventType,
-    getEmojiForToolName,
-    formatEventTypeLabel
+    getHookEventIcon,
+    getToolEventIcon,
+    formatEventTypeLabel,
+    formatChartLabel,
+    hookEventIcons,
+    toolEventIcons
   };
 }

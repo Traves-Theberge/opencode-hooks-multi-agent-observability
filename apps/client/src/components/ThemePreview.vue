@@ -83,7 +83,7 @@
                   color: theme.colors?.accentInfo || '#3b82f6'
                 }"
               >
-                🔧 PreToolUse
+                <WrenchIcon class="w-3.5 h-3.5 inline-block mr-1" /> PreToolUse
               </span>
             </div>
             <span 
@@ -119,7 +119,7 @@
                 class="text-sm"
                 :style="{ color: theme.colors?.textSecondary || '#374151' }"
               >
-                📝 Summary available
+                <FileEditIcon class="w-3.5 h-3.5 inline-block mr-1" /> Summary available
               </span>
             </div>
           </div>
@@ -241,6 +241,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { Wrench as WrenchIcon, FileEdit as FileEditIcon } from 'lucide-vue-next';
 import type { CustomTheme, CreateThemeFormData } from '../types/theme';
 
 interface Props {

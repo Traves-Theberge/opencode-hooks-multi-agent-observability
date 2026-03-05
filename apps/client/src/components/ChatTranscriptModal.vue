@@ -18,7 +18,7 @@
           <div class="flex-shrink-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 mobile:p-3">
             <div class="flex items-center justify-between mb-4 mobile:mb-2">
               <h2 class="text-3xl mobile:text-lg font-semibold text-gray-900 dark:text-white">
-                💬 Chat Transcript
+                <MessageSquare class="w-7 h-7 text-primary mr-2" /> Chat Transcript
               </h2>
               <button
                 @click="close"
@@ -72,7 +72,7 @@
                     ? 'bg-blue-500 text-white' 
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                 >
-                  <span class="mr-1">{{ filter.icon }}</span>
+                  <DynIcon :name="filter.icon" class="w-3.5 h-3.5 mr-1" />
                   {{ filter.label }}
                 </button>
                 
@@ -107,6 +107,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { MessageSquare } from 'lucide-vue-next';
+import DynIcon from './DynIcon.vue';
 import ChatTranscript from './ChatTranscript.vue';
 
 const props = defineProps<{
@@ -121,23 +123,23 @@ const emit = defineEmits<{
 const searchQuery = ref('');
 const activeSearchQuery = ref('');
 const activeFilters = ref<string[]>([]);
-const copyAllButtonText = ref('📋 Copy All');
+const copyAllButtonText = ref('Copy All');
 
 const filters = [
   // Message types
-  { type: 'user', label: 'User', icon: '👤' },
-  { type: 'assistant', label: 'Assistant', icon: '🤖' },
-  { type: 'system', label: 'System', icon: '⚙️' },
+  { type: 'user', label: 'User', icon: 'User' },
+  { type: 'assistant', label: 'Assistant', icon: 'Bot' },
+  { type: 'system', label: 'System', icon: 'Settings' },
   
   // Tool actions
-  { type: 'tool_use', label: 'Tool Use', icon: '🔧' },
-  { type: 'tool_result', label: 'Tool Result', icon: '✅' },
+  { type: 'tool_use', label: 'Tool Use', icon: 'Wrench' },
+  { type: 'tool_result', label: 'Tool Result', icon: 'CheckCircle' },
   
   // Specific tools
-  { type: 'Read', label: 'Read', icon: '📄' },
-  { type: 'Write', label: 'Write', icon: '✍️' },
-  { type: 'Edit', label: 'Edit', icon: '✏️' },
-  { type: 'Glob', label: 'Glob', icon: '🔎' },
+  { type: 'Read', label: 'Read', icon: 'FileText' },
+  { type: 'Write', label: 'Write', icon: 'PenTool' },
+  { type: 'Edit', label: 'Edit', icon: 'Pencil' },
+  { type: 'Glob', label: 'Glob', icon: 'SearchCode' },
 ];
 
 const toggleFilter = (type: string) => {
@@ -169,15 +171,15 @@ const copyAllMessages = async () => {
     const jsonPayload = JSON.stringify(props.chat, null, 2);
     await navigator.clipboard.writeText(jsonPayload);
     
-    copyAllButtonText.value = '✅ Copied!';
+    copyAllButtonText.value = 'Copied!';
     setTimeout(() => {
-      copyAllButtonText.value = '📋 Copy All';
+      copyAllButtonText.value = 'Copy All';
     }, 2000);
   } catch (err) {
     console.error('Failed to copy all messages:', err);
-    copyAllButtonText.value = '❌ Failed';
+    copyAllButtonText.value = 'Failed';
     setTimeout(() => {
-      copyAllButtonText.value = '📋 Copy All';
+      copyAllButtonText.value = 'Copy All';
     }, 2000);
   }
 };

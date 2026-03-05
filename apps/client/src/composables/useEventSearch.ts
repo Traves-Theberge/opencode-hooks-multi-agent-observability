@@ -38,19 +38,19 @@ export function useEventSearch() {
     }
 
     // Model name
-    if (event.model) {
-      parts.push(event.model);
+    if (event.payload?.model) {
+      parts.push(String(event.payload.model));
     }
 
     // Tool information
-    if (event.tool_name) {
-      parts.push(event.tool_name);
+    if (event.payload?.tool_name) {
+      parts.push(String(event.payload.tool_name));
     }
-    if (event.tool_command) {
-      parts.push(event.tool_command);
+    if (event.payload?.tool_command) {
+      parts.push(String(event.payload.tool_command));
     }
-    if (event.tool_file && event.tool_file.path) {
-      parts.push(event.tool_file.path);
+    if (event.payload?.tool_file?.path) {
+      parts.push(String(event.payload.tool_file.path));
     }
 
     // Summary text
@@ -59,11 +59,11 @@ export function useEventSearch() {
     }
 
     // HITL information
-    if (event.hitl_question) {
-      parts.push(event.hitl_question);
+    if (event.humanInTheLoop?.question) {
+      parts.push(event.humanInTheLoop.question);
     }
-    if (event.hitl_permission) {
-      parts.push(event.hitl_permission);
+    if (event.humanInTheLoopStatus?.response?.permission !== undefined) {
+      parts.push(String(event.humanInTheLoopStatus.response.permission));
     }
 
     return parts.join(' ').toLowerCase();

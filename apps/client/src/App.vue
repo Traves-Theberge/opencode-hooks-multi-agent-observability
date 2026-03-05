@@ -1,64 +1,58 @@
 <template>
-  <div class="h-screen flex flex-col bg-[var(--theme-bg-secondary)]">
-    <!-- Header with Primary Theme Colors -->
-    <header class="short:hidden bg-gradient-to-r from-[var(--theme-primary)] to-[var(--theme-primary-light)] shadow-lg border-b-2 border-[var(--theme-primary-dark)]">
-      <div class="px-3 py-4 mobile:py-1.5 mobile:px-2 flex items-center justify-between mobile:gap-2">
-        <!-- Title Section - Hidden on mobile -->
-        <div class="mobile:hidden">
-          <h1 class="text-2xl font-bold text-white drop-shadow-lg">
+  <div class="h-screen flex flex-col bg-background text-foreground font-sans">
+    <!-- Header with Premium Glassmorphism -->
+    <header class="short:hidden bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
+      <div class="px-4 py-3 flex items-center justify-between gap-4">
+        <!-- Title Section -->
+        <div>
+          <h1 class="text-xl font-semibold text-foreground tracking-tight flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-accent-green animate-pulse"></span>
             Multi-Agent Observability
           </h1>
         </div>
 
-        <!-- Connection Status -->
-        <div class="flex items-center mobile:space-x-1 space-x-1.5">
-          <div v-if="isConnected" class="flex items-center mobile:space-x-0.5 space-x-1.5">
-            <span class="relative flex mobile:h-2 mobile:w-2 h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full mobile:h-2 mobile:w-2 h-3 w-3 bg-green-500"></span>
+        <!-- Connection Status & Tools -->
+        <div class="flex items-center gap-3">
+          <div v-if="isConnected" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-status-success/10 border border-status-success/20">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-success opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-status-success"></span>
             </span>
-            <span class="text-base mobile:text-xs text-white font-semibold drop-shadow-md mobile:hidden">Connected</span>
+            <span class="text-xs font-medium text-status-success">Connected</span>
           </div>
-          <div v-else class="flex items-center mobile:space-x-0.5 space-x-1.5">
-            <span class="relative flex mobile:h-2 mobile:w-2 h-3 w-3">
-              <span class="relative inline-flex rounded-full mobile:h-2 mobile:w-2 h-3 w-3 bg-red-500"></span>
+          <div v-else class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-status-error/10 border border-status-error/20">
+            <span class="relative flex h-2 w-2">
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-status-error"></span>
             </span>
-            <span class="text-base mobile:text-xs text-white font-semibold drop-shadow-md mobile:hidden">Disconnected</span>
+            <span class="text-xs font-medium text-status-error">Disconnected</span>
           </div>
-        </div>
 
-        <!-- Event Count and Theme Toggle -->
-        <div class="flex items-center mobile:space-x-1 space-x-2">
-          <span class="text-base mobile:text-xs text-white font-semibold drop-shadow-md bg-[var(--theme-primary-dark)] mobile:px-2 mobile:py-0.5 px-3 py-1.5 rounded-full border border-white/30">
-            {{ events.length }}
+          <!-- Event Count Tag -->
+          <span class="text-xs font-medium bg-muted text-muted-foreground px-2.5 py-1 rounded-full border border-border">
+            {{ events.length }} Events
           </span>
 
-          <!-- Clear Button -->
-          <button
-            @click="handleClearClick"
-            class="p-3 mobile:p-1 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-200 border border-white/30 hover:border-white/50 backdrop-blur-sm shadow-lg hover:shadow-xl"
-            title="Clear events"
-          >
-            <span class="text-2xl mobile:text-base">🗑️</span>
-          </button>
+          <div class="h-4 w-px bg-border mx-1"></div>
 
-          <!-- Filters Toggle Button -->
-          <button
-            @click="showFilters = !showFilters"
-            class="p-3 mobile:p-1 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-200 border border-white/30 hover:border-white/50 backdrop-blur-sm shadow-lg hover:shadow-xl"
-            :title="showFilters ? 'Hide filters' : 'Show filters'"
-          >
-            <span class="text-2xl mobile:text-base">📊</span>
-          </button>
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-1">
+            <button
+              @click="handleClearClick"
+              class="p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+              title="Clear events"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>
 
-          <!-- Theme Manager Button -->
-          <button
-            @click="handleThemeManagerClick"
-            class="p-3 mobile:p-1 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-200 border border-white/30 hover:border-white/50 backdrop-blur-sm shadow-lg hover:shadow-xl"
-            title="Open theme manager"
-          >
-            <span class="text-2xl mobile:text-base">🎨</span>
-          </button>
+            <button
+              @click="showFilters = !showFilters"
+              class="p-2 rounded-md transition-colors"
+              :class="showFilters ? 'bg-primary text-primary-foreground' : 'hover:bg-secondary text-muted-foreground hover:text-foreground'"
+              :title="showFilters ? 'Hide filters' : 'Show filters'"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -81,7 +75,7 @@
     />
 
     <!-- Agent Swim Lane Container (below pulse chart, full width, hidden when empty) -->
-    <div v-if="selectedAgentLanes.length > 0" class="w-full bg-[var(--theme-bg-secondary)] px-3 py-4 mobile:px-2 mobile:py-2 overflow-hidden">
+    <div v-if="selectedAgentLanes.length > 0" class="w-full bg-card/60 backdrop-blur-md px-3 py-4 mobile:px-2 mobile:py-2 overflow-hidden border-b border-border">
       <AgentSwimLaneContainer
         :selected-agents="selectedAgentLanes"
         :events="events"
@@ -90,16 +84,59 @@
       />
     </div>
     
-    <!-- Timeline -->
+    <!-- Dashboard Main View (Tabbed: Topology / Event Stream) -->
     <div class="flex flex-col flex-1 overflow-hidden">
-      <EventTimeline
-        :events="events"
-        :filters="filters"
-        :unique-app-names="uniqueAppNames"
-        :all-app-names="allAppNames"
-        v-model:stick-to-bottom="stickToBottom"
-        @select-agent="toggleAgentLane"
-      />
+      <!-- Tab Bar -->
+      <div class="flex items-center bg-card/60 backdrop-blur-md border-b border-border px-4 py-0 gap-1 shrink-0">
+        <button
+          @click="activeTab = 'events'"
+          class="relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors duration-200"
+          :class="activeTab === 'events' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/80'"
+        >
+          <Zap class="w-4 h-4" :class="activeTab === 'events' ? 'text-accent-amber' : ''" />
+          Event Stream
+          <span v-if="events.length > 0" class="text-[10px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">{{ events.length }}</span>
+          <span
+            v-if="activeTab === 'events'"
+            class="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full"
+          />
+        </button>
+        <button
+          @click="activeTab = 'topology'"
+          class="relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors duration-200"
+          :class="activeTab === 'topology' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/80'"
+        >
+          <Network class="w-4 h-4" :class="activeTab === 'topology' ? 'text-primary' : ''" />
+          Topology
+          <span
+            v-if="activeTab === 'topology'"
+            class="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full"
+          />
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="flex-1 overflow-hidden">
+        <!-- Events Tab -->
+        <EventTimeline
+          v-show="activeTab === 'events'"
+          class="h-full bg-card/40 backdrop-blur-md"
+          :events="events"
+          :filters="filters"
+          :unique-app-names="uniqueAppNames"
+          :all-app-names="allAppNames"
+          v-model:stick-to-bottom="stickToBottom"
+          @select-agent="toggleAgentLane"
+        />
+
+        <!-- Topology Tab -->
+        <div v-show="activeTab === 'topology'" class="h-full overflow-auto p-3">
+          <TopologyView
+            :events="events"
+            class="h-full"
+          />
+        </div>
+      </div>
     </div>
     
     <!-- Stick to bottom button -->
@@ -109,10 +146,9 @@
       @toggle="stickToBottom = !stickToBottom"
     />
     
-    <!-- Error message -->
     <div
       v-if="error"
-      class="fixed bottom-4 left-4 mobile:bottom-3 mobile:left-3 mobile:right-3 bg-red-100 border border-red-400 text-red-700 px-3 py-2 mobile:px-2 mobile:py-1.5 rounded mobile:text-xs"
+      class="fixed bottom-4 left-4 mobile:bottom-3 mobile:left-3 mobile:right-3 bg-destructive/10 border border-destructive/30 text-destructive px-4 py-2.5 rounded-lg backdrop-blur-md shadow-lg text-sm font-medium"
     >
       {{ error }}
     </div>
@@ -137,6 +173,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import { Zap, Network } from 'lucide-vue-next';
 import type { TimeRange } from './types';
 import { useWebSocket } from './composables/useWebSocket';
 import { useThemes } from './composables/useThemes';
@@ -148,10 +185,12 @@ import LivePulseChart from './components/LivePulseChart.vue';
 import ThemeManager from './components/ThemeManager.vue';
 import ToastNotification from './components/ToastNotification.vue';
 import AgentSwimLaneContainer from './components/AgentSwimLaneContainer.vue';
+import TopologyView from './components/TopologyView.vue';
 import { WS_URL } from './config';
 
 // WebSocket connection
 const { events, isConnected, error, clearEvents } = useWebSocket(WS_URL);
+const activeTab = ref<'events' | 'topology'>('events');
 
 // Theme management (sets up theme system)
 useThemes();
@@ -227,9 +266,4 @@ const handleClearClick = () => {
   selectedAgentLanes.value = [];
 };
 
-// Debug handler for theme manager
-const handleThemeManagerClick = () => {
-  console.log('Theme manager button clicked!');
-  showThemeManager.value = true;
-};
 </script>
